@@ -1,0 +1,6 @@
+{
+	"watch": [
+		"workspace/src/**/*.js",
+		"workspace/static/**/*.js"
+	]
+}
