@@ -1,5 +1,6 @@
 var express = require('express');
 var webmake = require('webmake');
+var fs = require('fs');
 
 var app = express();
 
@@ -18,9 +19,14 @@ var app = express();
 	});
 }); */
 
-app.post("/load", (req, res) => {
+app.get("/", (req, res) => {
+	res.send("/ is called...");
+	
+});
+
+app.get("/load", (req, res) => {
 	res.send("/load is called...");
-    
+    //console.log("fs = " + fs);
 });
 
 app.post("/download", (req, res) => {

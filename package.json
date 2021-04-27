@@ -1,13 +1,12 @@
 {
 	"name": "webhwp",
 	"author": "RedPeanut (baekwon10000@gmail.com)",
-	"description": "",
+	"description": "HWP web editor based smarteditor2",
 	"version": "0.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/RedPeanut/webhwp.git"
 	},
-	"main": "workspace/src/webhwp.js",
 	"scripts": {
 		"prepublish": "node make",
 		"dev": "nodemon server.js"
@@ -15,7 +14,9 @@
 	"dependencies": {
 		"express": "^4.17.1",
 		"multer": "^1.4.2",
-		"per": "0.1.7"
+		"per": "0.1.7",
+		"xmldoc": "^0.1.2",
+		"event-stream": "^3.1.1"
 	},
 	"devDependencies": {
 		"node-minify": "^0.8.1",
