@@ -509,68 +509,68 @@
 						var runs = require('./runs');
 
 						var compatible = function(a, b) {
-						    if (a._runs !== b._runs) {
-						        throw new Error('Characters for different documents');
-						    }
+							if (a._runs !== b._runs) {
+								throw new Error('Characters for different documents');
+							}
 						};
 
 						var prototype = {
-						    equals: function(other) {
-						        compatible(this, other);
-						        return this._run === other._run && this._offset === other._offset;
-						    },
-						    cut: function(upTo) {
-						        compatible(this, upTo);
-						        var self = this;
-						        return function(eachRun) {
-						            for (var runIndex = self._run; runIndex <= upTo._run; runIndex++) {
-						                var run = self._runs[runIndex];
-						                if (run) {
-						                    var start = (runIndex === self._run) ? self._offset : 0;
-						                    var stop = (runIndex === upTo._run) ? upTo._offset : runs.getTextLength(run.text);
-						                    if (start < stop) {
-						                        runs.getSubText(function(piece) {
-						                            var pieceRun = Object.create(run);
-						                            pieceRun.text = piece;
-						                            eachRun(pieceRun);
-						                        }, run.text, start, stop - start);
-						                    }
-						                }
-						            }
-						        };
-						    }
+							equals: function(other) {
+								compatible(this, other);
+								return this._run === other._run && this._offset === other._offset;
+							},
+							cut: function(upTo) {
+								compatible(this, upTo);
+								var self = this;
+								return function(eachRun) {
+									for (var runIndex = self._run; runIndex <= upTo._run; runIndex++) {
+										var run = self._runs[runIndex];
+										if (run) {
+											var start = (runIndex === self._run) ? self._offset : 0;
+											var stop = (runIndex === upTo._run) ? upTo._offset : runs.getTextLength(run.text);
+											if (start < stop) {
+												runs.getSubText(function(piece) {
+													var pieceRun = Object.create(run);
+													pieceRun.text = piece;
+													eachRun(pieceRun);
+												}, run.text, start, stop - start);
+											}
+										}
+									}
+								};
+							}
 						};
 
 						function character(runArray, run, offset) {
-						    return Object.create(prototype, {
-						        _runs: { value: runArray },
-						        _run: { value: run },
-						        _offset: { value: offset },
-						        char: {
-						            value: run >= runArray.length ? null :
-						                runs.getTextChar(runArray[run].text, offset)
-						        }
-						    });
+							return Object.create(prototype, {
+								_runs: { value: runArray },
+								_run: { value: run },
+								_offset: { value: offset },
+								char: {
+									value: run >= runArray.length ? null :
+										runs.getTextChar(runArray[run].text, offset)
+								}
+							});
 						}
 
 						function firstNonEmpty(runArray, n) {
-						    for (; n < runArray.length; n++) {
-						        if (runs.getTextLength(runArray[n].text) != 0) {
-						            return character(runArray, n, 0);
-						        }
-						    }
-						    return character(runArray, runArray.length, 0);
+							for (; n < runArray.length; n++) {
+								if (runs.getTextLength(runArray[n].text) != 0) {
+									return character(runArray, n, 0);
+								}
+							}
+							return character(runArray, runArray.length, 0);
 						}
 
 						module.exports = function(runArray) {
-						    return function(emit) {
-						        var c = firstNonEmpty(runArray, 0);
-						        while (!emit(c) && (c.char !== null)) {
-						            c = (c._offset + 1 < runs.getTextLength(runArray[c._run].text))
-						                ? character(runArray, c._run, c._offset + 1)
-						                : firstNonEmpty(runArray, c._run + 1);
-						        }
-						    };
+							return function(emit) {
+								var c = firstNonEmpty(runArray, 0);
+								while (!emit(c) && (c.char !== null)) {
+									c = (c._offset + 1 < runs.getTextLength(runArray[c._run].text))
+										? character(runArray, c._run, c._offset + 1)
+										: firstNonEmpty(runArray, c._run + 1);
+								}
+							};
 						};
 					},
 					"codes.js": function (exports, module, require) {
@@ -581,199 +581,199 @@
 						var util = require('./util');
 
 						var inlineNodePrototype = node.derive({
-						    parent: function() {
-						        return this._parent;
-						    },
-						    draw: function(ctx) {
-						        this.inline.draw(ctx,
-						            this.left,
-						            this.baseline,
-						            this.measured.width,
-						            this.measured.ascent,
-						            this.measured.descent,
-						            this.formatting);
-						    },
-						    position: function(left, baseline, bounds) {
-						        this.left = left;
-						        this.baseline = baseline;
-						        if (bounds) {
-						            this._bounds = bounds;
-						        }
-						    },
-						    bounds: function() {
-						        return this._bounds || rect(this.left, this.baseline - this.measured.ascent,
-						            this.measured.width, this.measured.ascent + this.measured.descent);
-						    },
-						    byCoordinate: function(x, y) {
-						        if (x <= this.bounds().center().x) {
-						            return this;
-						        }
-						        return this.next();
-						    }
+							parent: function() {
+								return this._parent;
+							},
+							draw: function(ctx) {
+								this.inline.draw(ctx,
+									this.left,
+									this.baseline,
+									this.measured.width,
+									this.measured.ascent,
+									this.measured.descent,
+									this.formatting);
+							},
+							position: function(left, baseline, bounds) {
+								this.left = left;
+								this.baseline = baseline;
+								if (bounds) {
+									this._bounds = bounds;
+								}
+							},
+							bounds: function() {
+								return this._bounds || rect(this.left, this.baseline - this.measured.ascent,
+									this.measured.width, this.measured.ascent + this.measured.descent);
+							},
+							byCoordinate: function(x, y) {
+								if (x <= this.bounds().center().x) {
+									return this;
+								}
+								return this.next();
+							}
 						});
 
 						var inlineNode = function(inline, parent, ordinal, length, formatting) {
-						    if (!inline.draw || !inline.measure) {
-						        throw new Error();
-						    }
-						    return Object.create(inlineNodePrototype, {
-						        inline: { value: inline },
-						        _parent: { value: parent },
-						        ordinal: { value: ordinal },
-						        length: { value: length },
-						        formatting: { value: formatting },
-						        measured: {
-						            value: inline.measure(formatting)
-						        }
-						    });
+							if (!inline.draw || !inline.measure) {
+								throw new Error();
+							}
+							return Object.create(inlineNodePrototype, {
+								inline: { value: inline },
+								_parent: { value: parent },
+								ordinal: { value: ordinal },
+								length: { value: length },
+								formatting: { value: formatting },
+								measured: {
+									value: inline.measure(formatting)
+								}
+							});
 						};
 
 						var codes = {};
 
 						codes.number = function(obj, number) {
-						    var formattedNumber = (number + 1) + '.';
-						    return {
-						        measure: function(formatting) {
-						            return text.measure(formattedNumber, formatting);
-						        },
-						        draw: function(ctx, x, y, width, ascent, descent, formatting) {
-						            text.draw(ctx, formattedNumber, formatting, x, y, width, ascent, descent);
-						        }
-						    };
+							var formattedNumber = (number + 1) + '.';
+							return {
+								measure: function(formatting) {
+									return text.measure(formattedNumber, formatting);
+								},
+								draw: function(ctx, x, y, width, ascent, descent, formatting) {
+									text.draw(ctx, formattedNumber, formatting, x, y, width, ascent, descent);
+								}
+							};
 						};
 
 						var listTerminator = function(obj) {
-						    return util.derive(obj, {
-						        eof: true,
-						        measure: function(formatting) {
-						            return { width: 18, ascent: 0, descent: 0 }; // text.measure(text.enter, formatting);
-						        },
-						        draw: function(ctx, x, y) {
-						            // ctx.fillText(text.enter, x, y);
-						        }
-						    });
+							return util.derive(obj, {
+								eof: true,
+								measure: function(formatting) {
+									return { width: 18, ascent: 0, descent: 0 }; // text.measure(text.enter, formatting);
+								},
+								draw: function(ctx, x, y) {
+									// ctx.fillText(text.enter, x, y);
+								}
+							});
 						};
 
 						codes.listNext = codes.listEnd = listTerminator;
 
 						codes.listStart = function(obj, data, allCodes) {
-						    return util.derive(obj, {
-						        block: function(left, top, width, ordinal, parent, formatting) {
-						            var list = node.generic('list', parent, left, top),
-						                itemNode,
-						                itemFrame,
-						                itemMarker;
+							return util.derive(obj, {
+								block: function(left, top, width, ordinal, parent, formatting) {
+									var list = node.generic('list', parent, left, top),
+										itemNode,
+										itemFrame,
+										itemMarker;
 
-						            var indent = 50, spacing = 10;
+									var indent = 50, spacing = 10;
 
-						            var startItem = function(code, formatting) {
-						                itemNode = node.generic('item', list);
-						                var marker = allCodes(code.marker || { $: 'number' }, list.children().length);
-						                itemMarker = inlineNode(marker, itemNode, ordinal, 1, formatting);
-						                itemMarker.block = true;
-						                itemFrame = frame(
-						                    left + indent, top, width - indent, ordinal + 1, itemNode,
-						                    function(terminatorCode) {
-						                        return terminatorCode.$ === 'listEnd';
-						                    },
-						                    itemMarker.measured.ascent
-						                );
-						            };
+									var startItem = function(code, formatting) {
+										itemNode = node.generic('item', list);
+										var marker = allCodes(code.marker || { $: 'number' }, list.children().length);
+										itemMarker = inlineNode(marker, itemNode, ordinal, 1, formatting);
+										itemMarker.block = true;
+										itemFrame = frame(
+											left + indent, top, width - indent, ordinal + 1, itemNode,
+											function(terminatorCode) {
+												return terminatorCode.$ === 'listEnd';
+											},
+											itemMarker.measured.ascent
+										);
+									};
 
-						            startItem(obj, formatting);
+									startItem(obj, formatting);
 
-						            return function(inputWord) {
-						                if (itemFrame) {
-						                    itemFrame(function(finishedFrame) {
-						                        ordinal = finishedFrame.ordinal + finishedFrame.length;
-						                        var frameBounds = finishedFrame.bounds();
+									return function(inputWord) {
+										if (itemFrame) {
+											itemFrame(function(finishedFrame) {
+												ordinal = finishedFrame.ordinal + finishedFrame.length;
+												var frameBounds = finishedFrame.bounds();
 
-						                        // get first line and position marker
-						                        var firstLine = finishedFrame.first();
-						                        var markerLeft = left + indent - spacing - itemMarker.measured.width;
-						                        var markerBounds = rect(left, top, indent, frameBounds.h);
-						                        if ('baseline' in firstLine) {
-						                            itemMarker.position(markerLeft, firstLine.baseline, markerBounds);
-						                        } else {
-						                            itemMarker.position(markerLeft, top + itemMarker.measured.ascent, markerBounds);
-						                        }
+												// get first line and position marker
+												var firstLine = finishedFrame.first();
+												var markerLeft = left + indent - spacing - itemMarker.measured.width;
+												var markerBounds = rect(left, top, indent, frameBounds.h);
+												if ('baseline' in firstLine) {
+													itemMarker.position(markerLeft, firstLine.baseline, markerBounds);
+												} else {
+													itemMarker.position(markerLeft, top + itemMarker.measured.ascent, markerBounds);
+												}
 
-						                        top = frameBounds.t + frameBounds.h;
+												top = frameBounds.t + frameBounds.h;
 
-						                        itemNode.children().push(itemMarker);
-						                        itemNode.children().push(finishedFrame);
-						                        itemNode.finalize();
+												itemNode.children().push(itemMarker);
+												itemNode.children().push(finishedFrame);
+												itemNode.finalize();
 
-						                        list.children().push(itemNode);
-						                        itemNode = itemFrame = itemMarker = null;
-						                    }, inputWord);
-						                } else {
-						                    ordinal++;
-						                }
+												list.children().push(itemNode);
+												itemNode = itemFrame = itemMarker = null;
+											}, inputWord);
+										} else {
+											ordinal++;
+										}
 
-						                if (!itemFrame) {
-						                    var i = inputWord.code();
-						                    if (i) {
-						                        if (i.$ == 'listEnd') {
-						                            list.finalize();
-						                            return list;
-						                        }
-						                        if (i.$ == 'listNext') {
-						                            startItem(i, inputWord.codeFormatting());
-						                        }
-						                    }
-						                }
-						            };
-						        }
-						    });
+										if (!itemFrame) {
+											var i = inputWord.code();
+											if (i) {
+												if (i.$ == 'listEnd') {
+													list.finalize();
+													return list;
+												}
+												if (i.$ == 'listNext') {
+													startItem(i, inputWord.codeFormatting());
+												}
+											}
+										}
+									};
+								}
+							});
 						};
 
 						module.exports = exports = function(obj, number, allCodes) {
-						    var impl = codes[obj.$];
-						    return impl && impl(obj, number, allCodes);
+							var impl = codes[obj.$];
+							return impl && impl(obj, number, allCodes);
 						};
 
 						exports.editFilter = function(doc) {
-						    var balance = 0;
+							var balance = 0;
 
-						    if (!doc.words.some(function(word, i) {
-						        var code = word.code();
-						        if (code) {
-						            switch (code.$) {
-						                case 'listStart':
-						                    balance++;
-						                    break;
-						                case 'listNext':
-						                    if (balance === 0) {
-						                        doc.spliceWordsWithRuns(i, 1, [util.derive(word.codeFormatting(), {
-						                            text: {
-						                                $: 'listStart',
-						                                marker: code.marker
-						                            }
-						                        })]);
-						                        return true;
-						                    }
-						                    break;
-						                case 'listEnd':
-						                    if (balance === 0) {
-						                        doc.spliceWordsWithRuns(i, 1, []);
-						                    }
-						                    balance--;
-						                    break;
-						            }
-						        }
-						    })) {
-						        if (balance > 0) {
-						            var ending = [];
-						            while (balance > 0) {
-						                balance--;
-						                ending.push({
-						                    text: { $: 'listEnd' }
-						                });
-						            }
-						            doc.spliceWordsWithRuns(doc.words.length - 1, 0, ending);
-						        }
-						    }
+							if (!doc.words.some(function(word, i) {
+								var code = word.code();
+								if (code) {
+									switch (code.$) {
+										case 'listStart':
+											balance++;
+											break;
+										case 'listNext':
+											if (balance === 0) {
+												doc.spliceWordsWithRuns(i, 1, [util.derive(word.codeFormatting(), {
+													text: {
+														$: 'listStart',
+														marker: code.marker
+													}
+												})]);
+												return true;
+											}
+											break;
+										case 'listEnd':
+											if (balance === 0) {
+												doc.spliceWordsWithRuns(i, 1, []);
+											}
+											balance--;
+											break;
+									}
+								}
+							})) {
+								if (balance > 0) {
+									var ending = [];
+									while (balance > 0) {
+										balance--;
+										ending.push({
+											text: { $: 'listEnd' }
+										});
+									}
+									doc.spliceWordsWithRuns(doc.words.length - 1, 0, ending);
+								}
+							}
 						};
 					},
 					"doc.js": function (exports, module, require) {
@@ -1249,41 +1249,41 @@
 					"dom.js": function (exports, module, require) {
 						
 						exports.isAttached = function(element) {
-						    var ancestor = element;
-						    while(ancestor.parentNode) {
-						        ancestor = ancestor.parentNode;
-						    }
-						    return !!ancestor.body;
+							var ancestor = element;
+							while(ancestor.parentNode) {
+								ancestor = ancestor.parentNode;
+							}
+							return !!ancestor.body;
 						};
 
 						exports.clear = function(element) {
-						    while (element.firstChild) {
-						        element.removeChild(element.firstChild);
-						    }
+							while (element.firstChild) {
+								element.removeChild(element.firstChild);
+							}
 						};
 
 						exports.setText = function(element, text) {
-						    exports.clear(element);
-						    element.appendChild(document.createTextNode(text));
+							exports.clear(element);
+							element.appendChild(document.createTextNode(text));
 						};
 
 						exports.handleEvent = function(element, name, handler) {
-						    element.addEventListener(name, function(ev) {
-						        if (handler(ev) === false) {
-						            ev.preventDefault();
-						        }
-						    });
+							element.addEventListener(name, function(ev) {
+								if (handler(ev) === false) {
+									ev.preventDefault();
+								}
+							});
 						};
 
 						exports.handleMouseEvent = function(element, name, handler) {
-						    exports.handleEvent(element, name, function(ev) {
-						        var rect = element.getBoundingClientRect();
-						        return handler(ev, ev.clientX - rect.left, ev.clientY - rect.top);
-						    });
+							exports.handleEvent(element, name, function(ev) {
+								var rect = element.getBoundingClientRect();
+								return handler(ev, ev.clientX - rect.left, ev.clientY - rect.top);
+							});
 						};
 
 						exports.effectiveStyle = function(element, name) {
-						    return document.defaultView.getComputedStyle(element).getPropertyValue(name);
+							return document.defaultView.getComputedStyle(element).getPropertyValue(name);
 						};
 					},
 					"editor.js": function (exports, module, require) {
@@ -1293,485 +1293,485 @@
 						var rect = require('./rect');
 
 						setInterval(function() {
-						    var editors = document.querySelectorAll('.carotaEditorCanvas');
+							var editors = document.querySelectorAll('.carotaEditorCanvas');
 
-						    var ev = document.createEvent('Event');
-						    ev.initEvent('carotaEditorSharedTimer', true, true);
+							var ev = document.createEvent('Event');
+							ev.initEvent('carotaEditorSharedTimer', true, true);
 
-						    // not in IE, apparently:
-						    // var ev = new CustomEvent('carotaEditorSharedTimer');
+							// not in IE, apparently:
+							// var ev = new CustomEvent('carotaEditorSharedTimer');
 
-						    for (var n = 0; n < editors.length; n++) {
-						        editors[n].dispatchEvent(ev);
-						    }
+							for (var n = 0; n < editors.length; n++) {
+								editors[n].dispatchEvent(ev);
+							}
 						}, 200);
 
 						exports.create = function(element) {
 
-						    // We need the host element to be a container:
-						    if (dom.effectiveStyle(element, 'position') !== 'absolute') {
-						        element.style.position = 'relative';
-						    }
+							// We need the host element to be a container:
+							if (dom.effectiveStyle(element, 'position') !== 'absolute') {
+								element.style.position = 'relative';
+							}
 
-						    element.innerHTML =
-						        '<div class="carotaSpacer">' +
-						            '<canvas width="100" height="100" class="carotaEditorCanvas" style="position: absolute;"></canvas>' +
-						        '</div>' +
-						        '<div class="carotaTextArea" style="overflow: hidden; position: absolute; height: 0;">' +
-						            '<textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" ' +
-						            'style="position: absolute; padding: 0px; width: 1000px; height: 1em; ' +
-						            'outline: none; font-size: 4px;"></textarea>'
-						        '</div>';
+							element.innerHTML =
+								'<div class="carotaSpacer">' +
+									'<canvas width="100" height="100" class="carotaEditorCanvas" style="position: absolute;"></canvas>' +
+								'</div>' +
+								'<div class="carotaTextArea" style="overflow: hidden; position: absolute; height: 0;">' +
+									'<textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" ' +
+									'style="position: absolute; padding: 0px; width: 1000px; height: 1em; ' +
+									'outline: none; font-size: 4px;"></textarea>'
+								'</div>';
 
-						    var canvas = element.querySelector('canvas'),
-						        spacer = element.querySelector('.carotaSpacer'),
-						        textAreaDiv = element.querySelector('.carotaTextArea'),
-						        textArea = element.querySelector('textarea'),
-						        doc = carotaDoc(),
-						        keyboardSelect = 0,
-						        keyboardX = null, nextKeyboardX = null,
-						        selectDragStart = null,
-						        focusChar = null,
-						        textAreaContent = '',
-						        richClipboard = null,
-						        plainClipboard = null;
-						    
-						    var toggles = {
-						        66: 'bold',
-						        73: 'italic',
-						        85: 'underline',
-						        83: 'strikeout'
-						    };
+							var canvas = element.querySelector('canvas'),
+								spacer = element.querySelector('.carotaSpacer'),
+								textAreaDiv = element.querySelector('.carotaTextArea'),
+								textArea = element.querySelector('textarea'),
+								doc = carotaDoc(),
+								keyboardSelect = 0,
+								keyboardX = null, nextKeyboardX = null,
+								selectDragStart = null,
+								focusChar = null,
+								textAreaContent = '',
+								richClipboard = null,
+								plainClipboard = null;
+							
+							var toggles = {
+								66: 'bold',
+								73: 'italic',
+								85: 'underline',
+								83: 'strikeout'
+							};
 
-						    var exhausted = function(ordinal, direction) {
-						        return direction < 0 ? ordinal <= 0 : ordinal >= doc.frame.length - 1;
-						    };
+							var exhausted = function(ordinal, direction) {
+								return direction < 0 ? ordinal <= 0 : ordinal >= doc.frame.length - 1;
+							};
 
-						    var differentLine = function(caret1, caret2) {
-						        return (caret1.b <= caret2.t) ||
-						               (caret2.b <= caret1.t);
-						    };
+							var differentLine = function(caret1, caret2) {
+								return (caret1.b <= caret2.t) ||
+									   (caret2.b <= caret1.t);
+							};
 
-						    var changeLine = function(ordinal, direction) {
+							var changeLine = function(ordinal, direction) {
 
-						        var originalCaret = doc.getCaretCoords(ordinal), newCaret;
-						        nextKeyboardX = (keyboardX !== null) ? keyboardX : originalCaret.l;
+								var originalCaret = doc.getCaretCoords(ordinal), newCaret;
+								nextKeyboardX = (keyboardX !== null) ? keyboardX : originalCaret.l;
 
-						        while (!exhausted(ordinal, direction)) {
-						            ordinal += direction;
-						            newCaret = doc.getCaretCoords(ordinal);
-						            if (differentLine(newCaret, originalCaret)) {
-						                break;
-						            }
-						        }
+								while (!exhausted(ordinal, direction)) {
+									ordinal += direction;
+									newCaret = doc.getCaretCoords(ordinal);
+									if (differentLine(newCaret, originalCaret)) {
+										break;
+									}
+								}
 
-						        originalCaret = newCaret;
-						        while (!exhausted(ordinal, direction)) {
-						            if ((direction > 0 && newCaret.l >= nextKeyboardX) ||
-						                (direction < 0 && newCaret.l <= nextKeyboardX)) {
-						                break;
-						            }
+								originalCaret = newCaret;
+								while (!exhausted(ordinal, direction)) {
+									if ((direction > 0 && newCaret.l >= nextKeyboardX) ||
+										(direction < 0 && newCaret.l <= nextKeyboardX)) {
+										break;
+									}
 
-						            ordinal += direction;
-						            newCaret = doc.getCaretCoords(ordinal);
-						            if (differentLine(newCaret, originalCaret)) {
-						                ordinal -= direction;
-						                break;
-						            }
-						        }
+									ordinal += direction;
+									newCaret = doc.getCaretCoords(ordinal);
+									if (differentLine(newCaret, originalCaret)) {
+										ordinal -= direction;
+										break;
+									}
+								}
 
-						        return ordinal;
-						    };
+								return ordinal;
+							};
 
-						    var endOfline = function(ordinal, direction) {
-						        var originalCaret = doc.getCaretCoords(ordinal), newCaret;
-						        while (!exhausted(ordinal, direction)) {
-						            ordinal += direction;
-						            newCaret = doc.getCaretCoords(ordinal);
-						            if (differentLine(newCaret, originalCaret)) {
-						                ordinal -= direction;
-						                break;
-						            }
-						        }
-						        return ordinal;
-						    };
+							var endOfline = function(ordinal, direction) {
+								var originalCaret = doc.getCaretCoords(ordinal), newCaret;
+								while (!exhausted(ordinal, direction)) {
+									ordinal += direction;
+									newCaret = doc.getCaretCoords(ordinal);
+									if (differentLine(newCaret, originalCaret)) {
+										ordinal -= direction;
+										break;
+									}
+								}
+								return ordinal;
+							};
 
-						    var handleKey = function(key, selecting, ctrlKey) {
-						        var start = doc.selection.start,
-						            end = doc.selection.end,
-						            length = doc.frame.length - 1,
-						            handled = false;
+							var handleKey = function(key, selecting, ctrlKey) {
+								var start = doc.selection.start,
+									end = doc.selection.end,
+									length = doc.frame.length - 1,
+									handled = false;
 
-						        nextKeyboardX = null;
+								nextKeyboardX = null;
 
-						        if (!selecting) {
-						            keyboardSelect = 0;
-						        } else if (!keyboardSelect) {
-						            switch (key) {
-						                case 37: // left arrow
-						                case 38: // up - find character above
-						                case 36: // start of line
-						                case 33: // page up
-						                    keyboardSelect = -1;
-						                    break;
-						                case 39: // right arrow
-						                case 40: // down arrow - find character below
-						                case 35: // end of line
-						                case 34: // page down
-						                    keyboardSelect = 1;
-						                    break;
-						            }
-						        }
+								if (!selecting) {
+									keyboardSelect = 0;
+								} else if (!keyboardSelect) {
+									switch (key) {
+										case 37: // left arrow
+										case 38: // up - find character above
+										case 36: // start of line
+										case 33: // page up
+											keyboardSelect = -1;
+											break;
+										case 39: // right arrow
+										case 40: // down arrow - find character below
+										case 35: // end of line
+										case 34: // page down
+											keyboardSelect = 1;
+											break;
+									}
+								}
 
-						        var ordinal = keyboardSelect === 1 ? end : start;
+								var ordinal = keyboardSelect === 1 ? end : start;
 
-						        var changingCaret = false;
-						        switch (key) {
-						            case 37: // left arrow
-						                if (!selecting && start != end) {
-						                    ordinal = start;
-						                } else {
-						                    if (ordinal > 0) {
-						                        if (ctrlKey) {
-						                            var wordInfo = doc.wordContainingOrdinal(ordinal);
-						                            if (wordInfo.ordinal === ordinal) {
-						                                ordinal = wordInfo.index > 0 ? doc.wordOrdinal(wordInfo.index - 1) : 0;
-						                            } else {
-						                                ordinal = wordInfo.ordinal;
-						                            }
-						                        } else {
-						                            ordinal--;
-						                        }
-						                    }
-						                }
-						                changingCaret = true;
-						                break;
-						            case 39: // right arrow
-						                if (!selecting && start != end) {
-						                    ordinal = end;
-						                } else {
-						                    if (ordinal < length) {
-						                        if (ctrlKey) {
-						                            var wordInfo = doc.wordContainingOrdinal(ordinal);
-						                            ordinal = wordInfo.ordinal + wordInfo.word.length;
-						                        } else {
-						                            ordinal++;
-						                        }
-						                    }
-						                }
-						                changingCaret = true;
-						                break;
-						            case 40: // down arrow - find character below
-						                ordinal = changeLine(ordinal, 1);
-						                changingCaret = true;
-						                break;
-						            case 38: // up - find character above
-						                ordinal = changeLine(ordinal, -1);
-						                changingCaret = true;
-						                break;
-						            case 36: // start of line
-						                ordinal = endOfline(ordinal, -1);
-						                changingCaret = true;
-						                break;
-						            case 35: // end of line
-						                ordinal = endOfline(ordinal, 1);
-						                changingCaret = true;
-						                break;
-						            case 33: // page up
-						                ordinal = 0;
-						                changingCaret = true;
-						                break;
-						            case 34: // page down
-						                ordinal = length;
-						                changingCaret = true;
-						                break;
-						            case 8: // backspace
-						                if (start === end && start > 0) {
-						                    doc.range(start - 1, start).clear();
-						                    focusChar = start - 1;
-						                    doc.select(focusChar, focusChar);
-						                    handled = true;
-						                }
-						                break;
-						            case 46: // del
-						                if (start === end && start < length) {
-						                    doc.range(start, start + 1).clear();
-						                    handled = true;
-						                }
-						                break;
-						            case 90: // Z undo
-						                if (ctrlKey) {
-						                    handled = true;
-						                    doc.performUndo();
-						                }
-						                break;
-						            case 89: // Y undo
-						                if (ctrlKey) {
-						                    handled = true;
-						                    doc.performUndo(true);
-						                }
-						                break;
-						            case 65: // A select all
-						                if (ctrlKey) {
-						                    handled = true;
-						                    doc.select(0, length);
-						                }
-						                break;
-						            case 67: // C - copy to clipboard
-						            case 88: // X - cut to clipboard
-						                if (ctrlKey) {
-						                    // Allow standard handling to take place as well
-						                    richClipboard = doc.selectedRange().save();
-						                    plainClipboard = doc.selectedRange().plainText();
-						                }
-						                break;
-						        }
+								var changingCaret = false;
+								switch (key) {
+									case 37: // left arrow
+										if (!selecting && start != end) {
+											ordinal = start;
+										} else {
+											if (ordinal > 0) {
+												if (ctrlKey) {
+													var wordInfo = doc.wordContainingOrdinal(ordinal);
+													if (wordInfo.ordinal === ordinal) {
+														ordinal = wordInfo.index > 0 ? doc.wordOrdinal(wordInfo.index - 1) : 0;
+													} else {
+														ordinal = wordInfo.ordinal;
+													}
+												} else {
+													ordinal--;
+												}
+											}
+										}
+										changingCaret = true;
+										break;
+									case 39: // right arrow
+										if (!selecting && start != end) {
+											ordinal = end;
+										} else {
+											if (ordinal < length) {
+												if (ctrlKey) {
+													var wordInfo = doc.wordContainingOrdinal(ordinal);
+													ordinal = wordInfo.ordinal + wordInfo.word.length;
+												} else {
+													ordinal++;
+												}
+											}
+										}
+										changingCaret = true;
+										break;
+									case 40: // down arrow - find character below
+										ordinal = changeLine(ordinal, 1);
+										changingCaret = true;
+										break;
+									case 38: // up - find character above
+										ordinal = changeLine(ordinal, -1);
+										changingCaret = true;
+										break;
+									case 36: // start of line
+										ordinal = endOfline(ordinal, -1);
+										changingCaret = true;
+										break;
+									case 35: // end of line
+										ordinal = endOfline(ordinal, 1);
+										changingCaret = true;
+										break;
+									case 33: // page up
+										ordinal = 0;
+										changingCaret = true;
+										break;
+									case 34: // page down
+										ordinal = length;
+										changingCaret = true;
+										break;
+									case 8: // backspace
+										if (start === end && start > 0) {
+											doc.range(start - 1, start).clear();
+											focusChar = start - 1;
+											doc.select(focusChar, focusChar);
+											handled = true;
+										}
+										break;
+									case 46: // del
+										if (start === end && start < length) {
+											doc.range(start, start + 1).clear();
+											handled = true;
+										}
+										break;
+									case 90: // Z undo
+										if (ctrlKey) {
+											handled = true;
+											doc.performUndo();
+										}
+										break;
+									case 89: // Y undo
+										if (ctrlKey) {
+											handled = true;
+											doc.performUndo(true);
+										}
+										break;
+									case 65: // A select all
+										if (ctrlKey) {
+											handled = true;
+											doc.select(0, length);
+										}
+										break;
+									case 67: // C - copy to clipboard
+									case 88: // X - cut to clipboard
+										if (ctrlKey) {
+											// Allow standard handling to take place as well
+											richClipboard = doc.selectedRange().save();
+											plainClipboard = doc.selectedRange().plainText();
+										}
+										break;
+								}
 
-						        var toggle = toggles[key];
-						        if (ctrlKey && toggle) {
-						            var selRange = doc.selectedRange();
-						            selRange.setFormatting(toggle, selRange.getFormatting()[toggle] !== true);
-						            paint();
-						            handled = true;
-						        }
+								var toggle = toggles[key];
+								if (ctrlKey && toggle) {
+									var selRange = doc.selectedRange();
+									selRange.setFormatting(toggle, selRange.getFormatting()[toggle] !== true);
+									paint();
+									handled = true;
+								}
 
-						        if (changingCaret) {
-						            switch (keyboardSelect) {
-						                case 0:
-						                    start = end = ordinal;
-						                    break;
-						                case -1:
-						                    start = ordinal;
-						                    break;
-						                case 1:
-						                    end = ordinal;
-						                    break;
-						            }
+								if (changingCaret) {
+									switch (keyboardSelect) {
+										case 0:
+											start = end = ordinal;
+											break;
+										case -1:
+											start = ordinal;
+											break;
+										case 1:
+											end = ordinal;
+											break;
+									}
 
-						            if (start === end) {
-						                keyboardSelect = 0;
-						            } else {
-						                if (start > end) {
-						                    keyboardSelect = -keyboardSelect;
-						                    var t = end;
-						                    end = start;
-						                    start = t;
-						                }
-						            }
-						            focusChar = ordinal;
-						            doc.select(start, end);
-						            handled = true;
-						        }
+									if (start === end) {
+										keyboardSelect = 0;
+									} else {
+										if (start > end) {
+											keyboardSelect = -keyboardSelect;
+											var t = end;
+											end = start;
+											start = t;
+										}
+									}
+									focusChar = ordinal;
+									doc.select(start, end);
+									handled = true;
+								}
 
-						        keyboardX = nextKeyboardX;
-						        return handled;
-						    };
+								keyboardX = nextKeyboardX;
+								return handled;
+							};
 
-						    dom.handleEvent(textArea, 'keydown', function(ev) {
-						        if (handleKey(ev.keyCode, ev.shiftKey, ev.ctrlKey)) {
-						            return false;
-						        }
-						        console.log(ev.which);
-						    });
+							dom.handleEvent(textArea, 'keydown', function(ev) {
+								if (handleKey(ev.keyCode, ev.shiftKey, ev.ctrlKey)) {
+									return false;
+								}
+								console.log(ev.which);
+							});
 
-						    var verticalAlignment = 'top';
-						    
-						    doc.setVerticalAlignment = function(va) {
-						        verticalAlignment = va;
-						        paint();
-						    }
+							var verticalAlignment = 'top';
+							
+							doc.setVerticalAlignment = function(va) {
+								verticalAlignment = va;
+								paint();
+							}
 
-						    function getVerticalOffset() {
-						        var docHeight = doc.frame.bounds().h;
-						        if (docHeight < element.clientHeight) { 
-						            switch (verticalAlignment) {
-						                case 'middle':
-						                    return (element.clientHeight - docHeight) / 2;
-						                case 'bottom':
-						                    return element.clientHeight - docHeight;
-						            }
-						        }
-						        return 0;
-						    }
+							function getVerticalOffset() {
+								var docHeight = doc.frame.bounds().h;
+								if (docHeight < element.clientHeight) { 
+									switch (verticalAlignment) {
+										case 'middle':
+											return (element.clientHeight - docHeight) / 2;
+										case 'bottom':
+											return element.clientHeight - docHeight;
+									}
+								}
+								return 0;
+							}
 
-						    var paint = function() {
+							var paint = function() {
 
-						        var availableWidth = element.clientWidth * 1; // adjust to 0.5 to see if we draw in the wrong places!
-						        if (doc.width() !== availableWidth) {
-						            doc.width(availableWidth);
-						        }
+								var availableWidth = element.clientWidth * 1; // adjust to 0.5 to see if we draw in the wrong places!
+								if (doc.width() !== availableWidth) {
+									doc.width(availableWidth);
+								}
 
-						        var docHeight = doc.frame.bounds().h;
+								var docHeight = doc.frame.bounds().h;
 
-						        var dpr = Math.max(1, window.devicePixelRatio || 1);
-						        
-						        var logicalWidth = Math.max(doc.frame.actualWidth(), element.clientWidth),
-						            logicalHeight = element.clientHeight;
-						        
-						        canvas.width = dpr * logicalWidth;
-						        canvas.height = dpr * logicalHeight;
-						        canvas.style.width = logicalWidth + 'px';
-						        canvas.style.height = logicalHeight + 'px';
-						        
-						        canvas.style.top = element.scrollTop + 'px';
-						        spacer.style.width = logicalWidth + 'px';
-						        spacer.style.height = Math.max(docHeight, element.clientHeight) + 'px';
+								var dpr = Math.max(1, window.devicePixelRatio || 1);
+								
+								var logicalWidth = Math.max(doc.frame.actualWidth(), element.clientWidth),
+									logicalHeight = element.clientHeight;
+								
+								canvas.width = dpr * logicalWidth;
+								canvas.height = dpr * logicalHeight;
+								canvas.style.width = logicalWidth + 'px';
+								canvas.style.height = logicalHeight + 'px';
+								
+								canvas.style.top = element.scrollTop + 'px';
+								spacer.style.width = logicalWidth + 'px';
+								spacer.style.height = Math.max(docHeight, element.clientHeight) + 'px';
 
-						        if (docHeight < (element.clientHeight - 50) &&
-						            doc.frame.actualWidth() <= availableWidth) {
-						            element.style.overflow = 'hidden';
-						        } else {
-						            element.style.overflow = 'auto';
-						        }
+								if (docHeight < (element.clientHeight - 50) &&
+									doc.frame.actualWidth() <= availableWidth) {
+									element.style.overflow = 'hidden';
+								} else {
+									element.style.overflow = 'auto';
+								}
 
-						        var ctx = canvas.getContext('2d');
-						        ctx.scale(dpr, dpr);
+								var ctx = canvas.getContext('2d');
+								ctx.scale(dpr, dpr);
 
-						        ctx.clearRect(0, 0, logicalWidth, logicalHeight);
-						        ctx.translate(0, getVerticalOffset() - element.scrollTop);
-						        
-						        doc.draw(ctx, rect(0, element.scrollTop, logicalWidth, logicalHeight));
-						        doc.drawSelection(ctx, selectDragStart || (document.activeElement === textArea));
-						    };
+								ctx.clearRect(0, 0, logicalWidth, logicalHeight);
+								ctx.translate(0, getVerticalOffset() - element.scrollTop);
+								
+								doc.draw(ctx, rect(0, element.scrollTop, logicalWidth, logicalHeight));
+								doc.drawSelection(ctx, selectDragStart || (document.activeElement === textArea));
+							};
 
-						    dom.handleEvent(element, 'scroll', paint);
+							dom.handleEvent(element, 'scroll', paint);
 
-						    dom.handleEvent(textArea, 'input', function() {
-						        var newText = textArea.value;
-						        if (textAreaContent != newText) {
-						            textAreaContent = '';
-						            textArea.value = '';
-						            if (newText === plainClipboard) {
-						                newText = richClipboard;
-						            }
-						            doc.insert(newText);
-						        }
-						    });
+							dom.handleEvent(textArea, 'input', function() {
+								var newText = textArea.value;
+								if (textAreaContent != newText) {
+									textAreaContent = '';
+									textArea.value = '';
+									if (newText === plainClipboard) {
+										newText = richClipboard;
+									}
+									doc.insert(newText);
+								}
+							});
 
-						    var updateTextArea = function() {
-						        focusChar = focusChar === null ? doc.selection.end : focusChar;
-						        var endChar = doc.byOrdinal(focusChar);
-						        focusChar = null;
-						        if (endChar) {
-						            var bounds = endChar.bounds();
-						            textAreaDiv.style.left = bounds.l + 'px';
-						            textAreaDiv.style.top = bounds.t + 'px';
-						            textArea.focus();
-						            var scrollDownBy = Math.max(0, bounds.t + bounds.h -
-						                    (element.scrollTop + element.clientHeight));
-						            if (scrollDownBy) {
-						                element.scrollTop += scrollDownBy;
-						            }
-						            var scrollUpBy = Math.max(0, element.scrollTop - bounds.t);
-						            if (scrollUpBy) {
-						                element.scrollTop -= scrollUpBy;
-						            }
-						            var scrollRightBy = Math.max(0, bounds.l -
-						                (element.scrollLeft + element.clientWidth));
-						            if (scrollRightBy) {
-						                element.scrollLeft += scrollRightBy;
-						            }
-						            var scrollLeftBy = Math.max(0, element.scrollLeft - bounds.l);
-						            if (scrollLeftBy) {
-						                element.scrollLeft -= scrollLeftBy;
-						            }
-						        }
-						        textAreaContent = doc.selectedRange().plainText();
-						        textArea.value = textAreaContent;
-						        textArea.select();
+							var updateTextArea = function() {
+								focusChar = focusChar === null ? doc.selection.end : focusChar;
+								var endChar = doc.byOrdinal(focusChar);
+								focusChar = null;
+								if (endChar) {
+									var bounds = endChar.bounds();
+									textAreaDiv.style.left = bounds.l + 'px';
+									textAreaDiv.style.top = bounds.t + 'px';
+									textArea.focus();
+									var scrollDownBy = Math.max(0, bounds.t + bounds.h -
+											(element.scrollTop + element.clientHeight));
+									if (scrollDownBy) {
+										element.scrollTop += scrollDownBy;
+									}
+									var scrollUpBy = Math.max(0, element.scrollTop - bounds.t);
+									if (scrollUpBy) {
+										element.scrollTop -= scrollUpBy;
+									}
+									var scrollRightBy = Math.max(0, bounds.l -
+										(element.scrollLeft + element.clientWidth));
+									if (scrollRightBy) {
+										element.scrollLeft += scrollRightBy;
+									}
+									var scrollLeftBy = Math.max(0, element.scrollLeft - bounds.l);
+									if (scrollLeftBy) {
+										element.scrollLeft -= scrollLeftBy;
+									}
+								}
+								textAreaContent = doc.selectedRange().plainText();
+								textArea.value = textAreaContent;
+								textArea.select();
 
-						        setTimeout(function() {
-						            textArea.focus();
-						        }, 10);
-						    };
+								setTimeout(function() {
+									textArea.focus();
+								}, 10);
+							};
 
-						    doc.selectionChanged(function(getformatting, takeFocus) {
-						        paint();
-						        if (!selectDragStart) {
-						            if (takeFocus !== false) {
-						                updateTextArea();
-						            }
-						        }
-						    });
+							doc.selectionChanged(function(getformatting, takeFocus) {
+								paint();
+								if (!selectDragStart) {
+									if (takeFocus !== false) {
+										updateTextArea();
+									}
+								}
+							});
 
-						    function registerMouseEvent(name, handler) {
-						        dom.handleMouseEvent(spacer, name, function(ev, x, y) {
-						            handler(doc.byCoordinate(x, y - getVerticalOffset()));
-						        });
-						    }
+							function registerMouseEvent(name, handler) {
+								dom.handleMouseEvent(spacer, name, function(ev, x, y) {
+									handler(doc.byCoordinate(x, y - getVerticalOffset()));
+								});
+							}
 
-						    registerMouseEvent('mousedown', function(node) {
-						        selectDragStart = node.ordinal;
-						        doc.select(node.ordinal, node.ordinal);
-						        keyboardX = null;
-						    });
+							registerMouseEvent('mousedown', function(node) {
+								selectDragStart = node.ordinal;
+								doc.select(node.ordinal, node.ordinal);
+								keyboardX = null;
+							});
 
-						    registerMouseEvent('dblclick', function(node) {
-						        node = node.parent();
-						        if (node) {
-						            doc.select(node.ordinal, node.ordinal +
-						                (node.word ? node.word.text.length : node.length));
-						        }
-						    });
+							registerMouseEvent('dblclick', function(node) {
+								node = node.parent();
+								if (node) {
+									doc.select(node.ordinal, node.ordinal +
+										(node.word ? node.word.text.length : node.length));
+								}
+							});
 
-						    registerMouseEvent('mousemove', function(node) {
-						        if (selectDragStart !== null) {
-						            if (node) {
-						                focusChar = node.ordinal;
-						                if (selectDragStart > node.ordinal) {
-						                    doc.select(node.ordinal, selectDragStart);
-						                } else {
-						                    doc.select(selectDragStart, node.ordinal);
-						                }
-						            }
-						        }
-						    });
+							registerMouseEvent('mousemove', function(node) {
+								if (selectDragStart !== null) {
+									if (node) {
+										focusChar = node.ordinal;
+										if (selectDragStart > node.ordinal) {
+											doc.select(node.ordinal, selectDragStart);
+										} else {
+											doc.select(selectDragStart, node.ordinal);
+										}
+									}
+								}
+							});
 
-						    registerMouseEvent('mouseup', function(node) {
-						        selectDragStart = null;
-						        keyboardX = null;
-						        updateTextArea();
-						        textArea.focus();
-						    });
+							registerMouseEvent('mouseup', function(node) {
+								selectDragStart = null;
+								keyboardX = null;
+								updateTextArea();
+								textArea.focus();
+							});
 
-						    var nextCaretToggle = new Date().getTime(),
-						        focused = false,
-						        cachedWidth = element.clientWidth,
-						        cachedHeight = element.clientHeight;
+							var nextCaretToggle = new Date().getTime(),
+								focused = false,
+								cachedWidth = element.clientWidth,
+								cachedHeight = element.clientHeight;
 
-						    var update = function() {
-						        var requirePaint = false;
-						        var newFocused = document.activeElement === textArea;
-						        if (focused !== newFocused) {
-						            focused = newFocused;
-						            requirePaint = true;
-						        }
+							var update = function() {
+								var requirePaint = false;
+								var newFocused = document.activeElement === textArea;
+								if (focused !== newFocused) {
+									focused = newFocused;
+									requirePaint = true;
+								}
 
-						        var now = new Date().getTime();
-						        if (now > nextCaretToggle) {
-						            nextCaretToggle = now + 500;
-						            if (doc.toggleCaret()) {
-						                requirePaint = true;
-						            }
-						        }
+								var now = new Date().getTime();
+								if (now > nextCaretToggle) {
+									nextCaretToggle = now + 500;
+									if (doc.toggleCaret()) {
+										requirePaint = true;
+									}
+								}
 
-						        if (element.clientWidth !== cachedWidth ||
-						            element.clientHeight !== cachedHeight) {
-						            requirePaint = true;
-						            cachedWidth =element.clientWidth;
-						            cachedHeight = element.clientHeight;
-						        }
+								if (element.clientWidth !== cachedWidth ||
+									element.clientHeight !== cachedHeight) {
+									requirePaint = true;
+									cachedWidth =element.clientWidth;
+									cachedHeight = element.clientHeight;
+								}
 
-						        if (requirePaint) {
-						            paint();
-						        }
-						    };
+								if (requirePaint) {
+									paint();
+								}
+							};
 
-						    dom.handleEvent(canvas, 'carotaEditorSharedTimer', update);
-						    update();
+							dom.handleEvent(canvas, 'carotaEditorSharedTimer', update);
+							update();
 
-						    doc.sendKey = handleKey;
-						    return doc;
+							doc.sendKey = handleKey;
+							return doc;
 						};
 					},
 					"frame.js": function (exports, module, require) {
@@ -1868,39 +1868,39 @@
 						var per = require('per');
 
 						var tag = function(name, formattingProperty) {
-						    return function(node, formatting) {
-						        if (node.nodeName === name) {
-						            formatting[formattingProperty] = true;
-						        }
-						    };
+							return function(node, formatting) {
+								if (node.nodeName === name) {
+									formatting[formattingProperty] = true;
+								}
+							};
 						};
 
 						var value = function(type, styleProperty, formattingProperty, transformValue) {
-						    return function(node, formatting) {
-						        var val = node[type] && node[type][styleProperty];
-						        if (val) {
-						            if (transformValue) {
-						                val = transformValue(val);
-						            }
-						            formatting[formattingProperty] = val;
-						        }
-						    };
+							return function(node, formatting) {
+								var val = node[type] && node[type][styleProperty];
+								if (val) {
+									if (transformValue) {
+										val = transformValue(val);
+									}
+									formatting[formattingProperty] = val;
+								}
+							};
 						};
 
 						var attrValue = function(styleProperty, formattingProperty, transformValue) {
-						    return value('attributes', styleProperty, formattingProperty, transformValue);
+							return value('attributes', styleProperty, formattingProperty, transformValue);
 						};
 
 						var styleValue = function(styleProperty, formattingProperty, transformValue) {
-						    return value('style', styleProperty, formattingProperty, transformValue);
+							return value('style', styleProperty, formattingProperty, transformValue);
 						};
 
 						var styleFlag = function(styleProperty, styleValue, formattingProperty) {
-						    return function(node, formatting) {
-						        if (node.style && node.style[styleProperty] === styleValue) {
-						            formatting[formattingProperty] = true;
-						        }
-						    };
+							return function(node, formatting) {
+								if (node.style && node.style[styleProperty] === styleValue) {
+									formatting[formattingProperty] = true;
+								}
+							};
 						};
 
 						var obsoleteFontSizes = [ 6, 7, 9, 10, 12, 16, 20, 30 ];
@@ -1908,155 +1908,155 @@
 						var aligns = { left: true, center: true, right: true, justify: true };
 
 						var checkAlign = function(value) {
-						    return aligns[value] ? value : 'left';
+							return aligns[value] ? value : 'left';
 						};
 
 						var fontName = function(name) {
-						    var s = name.split(/\s*,\s*/g);
-						    if (s.length == 0) {
-						        return name;
-						    }
-						    name = s[0]
-						    var raw = name.match(/^"(.*)"$/);
-						    if (raw) {
-						        return raw[1].trim();
-						    }
-						    raw = name.match(/^'(.*)'$/);
-						    if (raw) {
-						        return raw[1].trim();
-						    }
-						    return name;
+							var s = name.split(/\s*,\s*/g);
+							if (s.length == 0) {
+								return name;
+							}
+							name = s[0]
+							var raw = name.match(/^"(.*)"$/);
+							if (raw) {
+								return raw[1].trim();
+							}
+							raw = name.match(/^'(.*)'$/);
+							if (raw) {
+								return raw[1].trim();
+							}
+							return name;
 						};
 
 						var headings = {
-						    H1: 30,
-						    H2: 20,
-						    H3: 16,
-						    H4: 14,
-						    H5: 12
+							H1: 30,
+							H2: 20,
+							H3: 16,
+							H4: 14,
+							H5: 12
 						};
 
 						var handlers = [
-						    tag('B', 'bold'),
-						    tag('STRONG', 'bold'),
-						    tag('I', 'italic'),
-						    tag('EM', 'italic'),
-						    tag('U', 'underline'),
-						    tag('S', 'strikeout'),
-						    tag('STRIKE', 'strikeout'),
-						    tag('DEL', 'strikeout'),
-						    styleFlag('fontWeight', 'bold', 'bold'),
-						    styleFlag('fontStyle', 'italic', 'italic'),
-						    styleFlag('textDecoration', 'underline', 'underline'),
-						    styleFlag('textDecoration', 'line-through', 'strikeout'),
-						    styleValue('color', 'color'),
-						    styleValue('fontFamily', 'font', fontName),
-						    styleValue('fontSize', 'size', function(size) {
-						        var m = size.match(/^([\d\.]+)pt$/);
-						        return m ? parseFloat(m[1]) : 10
-						    }),
-						    styleValue('textAlign', 'align', checkAlign),
-						    function(node, formatting) {
-						        if (node.nodeName === 'SUB') {
-						            formatting.script = 'sub';
-						        }
-						    },
-						    function(node, formatting) {
-						        if (node.nodeName === 'SUPER') {
-						            formatting.script = 'super';
-						        }
-						    },
-						    function(node, formatting) {
-						        if (node.nodeName === 'CODE') {
-						            formatting.font = 'monospace';
-						        }
-						    },
-						    function(node, formatting) {
-						        var size = headings[node.nodeName];
-						        if (size) {
-						            formatting.size = size;
-						        }
-						    },
-						    attrValue('color', 'color'),
-						    attrValue('face', 'font', fontName),
-						    attrValue('align', 'align', checkAlign),
-						    attrValue('size', 'size', function(size) {
-						        return obsoleteFontSizes[size] || 10;
-						    })
+							tag('B', 'bold'),
+							tag('STRONG', 'bold'),
+							tag('I', 'italic'),
+							tag('EM', 'italic'),
+							tag('U', 'underline'),
+							tag('S', 'strikeout'),
+							tag('STRIKE', 'strikeout'),
+							tag('DEL', 'strikeout'),
+							styleFlag('fontWeight', 'bold', 'bold'),
+							styleFlag('fontStyle', 'italic', 'italic'),
+							styleFlag('textDecoration', 'underline', 'underline'),
+							styleFlag('textDecoration', 'line-through', 'strikeout'),
+							styleValue('color', 'color'),
+							styleValue('fontFamily', 'font', fontName),
+							styleValue('fontSize', 'size', function(size) {
+								var m = size.match(/^([\d\.]+)pt$/);
+								return m ? parseFloat(m[1]) : 10
+							}),
+							styleValue('textAlign', 'align', checkAlign),
+							function(node, formatting) {
+								if (node.nodeName === 'SUB') {
+									formatting.script = 'sub';
+								}
+							},
+							function(node, formatting) {
+								if (node.nodeName === 'SUPER') {
+									formatting.script = 'super';
+								}
+							},
+							function(node, formatting) {
+								if (node.nodeName === 'CODE') {
+									formatting.font = 'monospace';
+								}
+							},
+							function(node, formatting) {
+								var size = headings[node.nodeName];
+								if (size) {
+									formatting.size = size;
+								}
+							},
+							attrValue('color', 'color'),
+							attrValue('face', 'font', fontName),
+							attrValue('align', 'align', checkAlign),
+							attrValue('size', 'size', function(size) {
+								return obsoleteFontSizes[size] || 10;
+							})
 						];
 
 						var newLines = [ 'BR', 'P', 'H1', 'H2', 'H3', 'H4', 'H5' ];
 						var isNewLine = {};
 						newLines.forEach(function(name) {
-						    isNewLine[name] = true;
+							isNewLine[name] = true;
 						});
 
 						exports.parse = function(html, classes) {
-						    var root = html;
-						    if (typeof root === 'string') {
-						        root = document.createElement('div');
-						        root.innerHTML = html;
-						    }
+							var root = html;
+							if (typeof root === 'string') {
+								root = document.createElement('div');
+								root.innerHTML = html;
+							}
 
-						    var result = [], inSpace = true;
-						    var cons = per(runs.consolidate()).into(result);
-						    var emit = function(text, formatting) {
-						        cons.submit(Object.create(formatting, {
-						            text: { value: text }
-						        }));
-						    };
-						    var dealWithSpaces = function(text, formatting) {
-						        text = text.replace(/\n+\s*/g, ' ');
-						        var fullLength = text.length;
-						        text = text.replace(/^\s+/, '');
-						        if (inSpace) {
-						            inSpace = false;
-						        } else if (fullLength !== text.length) {
-						            text = ' ' + text;
-						        }
-						        fullLength = text.length;
-						        text = text.replace(/\s+$/, '');
-						        if (fullLength !== text.length) {
-						            inSpace = true;
-						            text += ' ';
-						        }
-						        emit(text, formatting);
-						    };
+							var result = [], inSpace = true;
+							var cons = per(runs.consolidate()).into(result);
+							var emit = function(text, formatting) {
+								cons.submit(Object.create(formatting, {
+									text: { value: text }
+								}));
+							};
+							var dealWithSpaces = function(text, formatting) {
+								text = text.replace(/\n+\s*/g, ' ');
+								var fullLength = text.length;
+								text = text.replace(/^\s+/, '');
+								if (inSpace) {
+									inSpace = false;
+								} else if (fullLength !== text.length) {
+									text = ' ' + text;
+								}
+								fullLength = text.length;
+								text = text.replace(/\s+$/, '');
+								if (fullLength !== text.length) {
+									inSpace = true;
+									text += ' ';
+								}
+								emit(text, formatting);
+							};
 
-						    function recurse(node, formatting) {
-						        if (node.nodeType == 3) {
-						            dealWithSpaces(node.nodeValue, formatting);
-						        } else {
-						            formatting = Object.create(formatting);
+							function recurse(node, formatting) {
+								if (node.nodeType == 3) {
+									dealWithSpaces(node.nodeValue, formatting);
+								} else {
+									formatting = Object.create(formatting);
 
-						            var classNames = node.attributes['class'];
-						            if (classNames) {
-						                classNames.value.split(' ').forEach(function(cls) {
-						                    cls = classes[cls];
-						                    if (cls) {
-						                        Object.keys(cls).forEach(function(key) {
-						                            formatting[key] = cls[key];
-						                        });
-						                    }
-						                })
-						            }
+									var classNames = node.attributes['class'];
+									if (classNames) {
+										classNames.value.split(' ').forEach(function(cls) {
+											cls = classes[cls];
+											if (cls) {
+												Object.keys(cls).forEach(function(key) {
+													formatting[key] = cls[key];
+												});
+											}
+										})
+									}
 
-						            handlers.forEach(function(handler) {
-						                handler(node, formatting);
-						            });
-						            if (node.childNodes) {
-						                for (var n = 0; n < node.childNodes.length; n++) {
-						                    recurse(node.childNodes[n], formatting);
-						                }
-						            }
-						            if (isNewLine[node.nodeName]) {
-						                emit('\n', formatting);
-						                inSpace = true;
-						            }
-						        }
-						    }
-						    recurse(root, {});
-						    return result;
+									handlers.forEach(function(handler) {
+										handler(node, formatting);
+									});
+									if (node.childNodes) {
+										for (var n = 0; n < node.childNodes.length; n++) {
+											recurse(node.childNodes[n], formatting);
+										}
+									}
+									if (isNewLine[node.nodeName]) {
+										emit('\n', formatting);
+										inSpace = true;
+									}
+								}
+							}
+							recurse(root, {});
+							return result;
 						};
 
 					},
@@ -2067,94 +2067,94 @@
 						var runs = require('./runs');
 
 						/*  A Line is returned by the wrap function. It contains an array of PositionedWord objects that are
-						    all on the same physical line in the wrapped text.
+							all on the same physical line in the wrapped text.
 
-						     It has a width (which is actually the same for all lines returned by the same wrap). It also has
-						     coordinates for baseline, ascent and descent. The ascent and descent have the maximum values of
-						     the individual words' ascent and descent coordinates.
+							 It has a width (which is actually the same for all lines returned by the same wrap). It also has
+							 coordinates for baseline, ascent and descent. The ascent and descent have the maximum values of
+							 the individual words' ascent and descent coordinates.
 
-						    It has methods:
+							It has methods:
 
-						        draw(ctx, x, y)
-						                  - Draw all the words in the line applying the specified (x, y) offset.
-						        bounds()
-						                  - Returns a Rect for the bounding box.
+								draw(ctx, x, y)
+										  - Draw all the words in the line applying the specified (x, y) offset.
+								bounds()
+										  - Returns a Rect for the bounding box.
 						 */
 
 						var prototype = node.derive({
-						    bounds: function(minimal) {
-						        if (minimal) {
-						            var firstWord = this.first().bounds(),
-						                lastWord = this.last().bounds();
-						            return rect(
-						                firstWord.l,
-						                this.baseline - this.ascent,
-						                (lastWord.l + lastWord.w) - firstWord.l,
-						                this.ascent + this.descent);
-						        }
-						        return rect(this.left, this.baseline - this.ascent,
-						            this.width, this.ascent + this.descent);
-						    },
-						    parent: function() {
-						        return this.doc;
-						    },
-						    children: function() {
-						        return this.positionedWords;
-						    },
-						    type: 'line'
+							bounds: function(minimal) {
+								if (minimal) {
+									var firstWord = this.first().bounds(),
+										lastWord = this.last().bounds();
+									return rect(
+										firstWord.l,
+										this.baseline - this.ascent,
+										(lastWord.l + lastWord.w) - firstWord.l,
+										this.ascent + this.descent);
+								}
+								return rect(this.left, this.baseline - this.ascent,
+									this.width, this.ascent + this.descent);
+							},
+							parent: function() {
+								return this.doc;
+							},
+							children: function() {
+								return this.positionedWords;
+							},
+							type: 'line'
 						});
 
 						module.exports = function(doc, left, width, baseline, ascent, descent, words, ordinal) {
 
-						    var align = words[0].align();
+							var align = words[0].align();
 
-						    var line = Object.create(prototype, {
-						        doc: { value: doc }, // should be called frame, or else switch to using parent on all nodes
-						        left: { value: left },
-						        width: { value: width },
-						        baseline: { value: baseline },
-						        ascent: { value: ascent },
-						        descent: { value: descent },
-						        ordinal: { value: ordinal },
-						        align: { value: align }
-						    });
+							var line = Object.create(prototype, {
+								doc: { value: doc }, // should be called frame, or else switch to using parent on all nodes
+								left: { value: left },
+								width: { value: width },
+								baseline: { value: baseline },
+								ascent: { value: ascent },
+								descent: { value: descent },
+								ordinal: { value: ordinal },
+								align: { value: align }
+							});
 
-						    var actualWidth = 0;
-						    words.forEach(function(word) {
-						        actualWidth += word.width;
-						    });
-						    actualWidth -= words[words.length - 1].space.width;
+							var actualWidth = 0;
+							words.forEach(function(word) {
+								actualWidth += word.width;
+							});
+							actualWidth -= words[words.length - 1].space.width;
 
-						    var x = 0, spacing = 0;
-						    if (actualWidth < width) {
-						        switch (align) {
-						            case 'right':
-						                x = width - actualWidth;
-						                break;
-						            case 'center':
-						                x = (width - actualWidth) / 2;
-						                break;
-						            case 'justify':
-						                if (words.length > 1 && !words[words.length - 1].isNewLine()) {
-						                    spacing = (width - actualWidth) / (words.length - 1);
-						                }
-						                break;
-						        }
-						    }
+							var x = 0, spacing = 0;
+							if (actualWidth < width) {
+								switch (align) {
+									case 'right':
+										x = width - actualWidth;
+										break;
+									case 'center':
+										x = (width - actualWidth) / 2;
+										break;
+									case 'justify':
+										if (words.length > 1 && !words[words.length - 1].isNewLine()) {
+											spacing = (width - actualWidth) / (words.length - 1);
+										}
+										break;
+								}
+							}
 
-						    Object.defineProperty(line, 'positionedWords', {
-						        value: words.map(function(word) {
-						            var wordLeft = x;
-						            x += (word.width + spacing);
-						            var wordOrdinal = ordinal;
-						            ordinal += (word.text.length + word.space.length);
-						            return positionedWord(word, line, wordLeft, wordOrdinal, word.width + spacing);
-						        })
-						    });
+							Object.defineProperty(line, 'positionedWords', {
+								value: words.map(function(word) {
+									var wordLeft = x;
+									x += (word.width + spacing);
+									var wordOrdinal = ordinal;
+									ordinal += (word.text.length + word.space.length);
+									return positionedWord(word, line, wordLeft, wordOrdinal, word.width + spacing);
+								})
+							});
 
-						    Object.defineProperty(line, 'actualWidth', { value: actualWidth });
-						    Object.defineProperty(line, 'length', { value: ordinal - line.ordinal });
-						    return line;
+							Object.defineProperty(line, 'actualWidth', { value: actualWidth });
+							Object.defineProperty(line, 'length', { value: ordinal - line.ordinal });
+							return line;
 						};
 					},
 					"node.js": function (exports, module, require) {
@@ -2164,224 +2164,224 @@
 						var util = require('./util');
 
 						exports.prototype = {
-						    children: function() {
-						        return [];
-						    },
-						    parent: function() {
-						        return null;
-						    },
-						    first: function() {
-						        return this.children()[0];
-						    },
-						    last: function() {
-						        return this.children()[this.children().length - 1];
-						    },
-						    next: function() {
-						        var self = this;
-						        for (;;) {
-						            var parent = self.parent();
-						            if (!parent) {
-						                return null;
-						            }
-						            var siblings = parent.children();
-						            var next = siblings[siblings.indexOf(self) + 1];
-						            if (next) {
-						                for (;;)  {
-						                    var first = next.first();
-						                    if (!first) {
-						                        break;
-						                    }
-						                    next = first;
-						                }
-						                return next;
-						            }
-						            self = parent;
-						        }
-						    },
-						    previous: function() {
-						        var parent = this.parent();
-						        if (!parent) {
-						            return null;
-						        }
-						        var siblings = parent.children();
-						        var prev = siblings[siblings.indexOf(this) - 1];
-						        if (prev) {
-						            return prev;
-						        }
-						        var prevParent = parent.previous();
-						        return !prevParent ? null : prevParent.last();
-						    },
-						    byOrdinal: function(index) {
-						        var found = null;
-						        if (this.children().some(function(child) {
-						            if (index >= child.ordinal && index < child.ordinal + child.length) {
-						                found = child.byOrdinal(index);
-						                if (found) {
-						                    return true;
-						                }
-						            }
-						        })) {
-						            return found;
-						        }
-						        return this;
-						    },
-						    byCoordinate: function(x, y) {
-						        var found;
-						        this.children().some(function(child) {
-						            var b = child.bounds();
-						            if (b.contains(x, y)) {
-						                found = child.byCoordinate(x, y);
-						                if (found) {
-						                    return true;
-						                }
-						            }
-						        });
-						        if (!found) {
-						            found = this.last();
-						            while (found) {
-						                var next = found.last();
-						                if (!next) {
-						                    break;
-						                }
-						                found = next;
-						            }
-						            var foundNext = found.next();
-						            if (foundNext && foundNext.block) {
-						                found = foundNext;
-						            }
-						        }
-						        return found;
-						    },
-						    draw: function(ctx, viewPort) {
-						        this.children().forEach(function(child) {
-						            child.draw(ctx, viewPort);
-						        });
-						    },
-						    parentOfType: function(type) {
-						        var p = this.parent();
-						        return p && (p.type === type ? p : p.parentOfType(type));
-						    },
-						    bounds: function() {
-						        var l = this._left, t = this._top, r = 0, b = 0;
-						        this.children().forEach(function(child) {
-						            var cb = child.bounds();
-						            l = Math.min(l, cb.l);
-						            t = Math.min(t, cb.t);
-						            r = Math.max(r, cb.l + cb.w);
-						            b = Math.max(b, cb.t + cb.h);
-						        });
-						        return rect(l, t, r - l, b - t);
-						    }
+							children: function() {
+								return [];
+							},
+							parent: function() {
+								return null;
+							},
+							first: function() {
+								return this.children()[0];
+							},
+							last: function() {
+								return this.children()[this.children().length - 1];
+							},
+							next: function() {
+								var self = this;
+								for (;;) {
+									var parent = self.parent();
+									if (!parent) {
+										return null;
+									}
+									var siblings = parent.children();
+									var next = siblings[siblings.indexOf(self) + 1];
+									if (next) {
+										for (;;)  {
+											var first = next.first();
+											if (!first) {
+												break;
+											}
+											next = first;
+										}
+										return next;
+									}
+									self = parent;
+								}
+							},
+							previous: function() {
+								var parent = this.parent();
+								if (!parent) {
+									return null;
+								}
+								var siblings = parent.children();
+								var prev = siblings[siblings.indexOf(this) - 1];
+								if (prev) {
+									return prev;
+								}
+								var prevParent = parent.previous();
+								return !prevParent ? null : prevParent.last();
+							},
+							byOrdinal: function(index) {
+								var found = null;
+								if (this.children().some(function(child) {
+									if (index >= child.ordinal && index < child.ordinal + child.length) {
+										found = child.byOrdinal(index);
+										if (found) {
+											return true;
+										}
+									}
+								})) {
+									return found;
+								}
+								return this;
+							},
+							byCoordinate: function(x, y) {
+								var found;
+								this.children().some(function(child) {
+									var b = child.bounds();
+									if (b.contains(x, y)) {
+										found = child.byCoordinate(x, y);
+										if (found) {
+											return true;
+										}
+									}
+								});
+								if (!found) {
+									found = this.last();
+									while (found) {
+										var next = found.last();
+										if (!next) {
+											break;
+										}
+										found = next;
+									}
+									var foundNext = found.next();
+									if (foundNext && foundNext.block) {
+										found = foundNext;
+									}
+								}
+								return found;
+							},
+							draw: function(ctx, viewPort) {
+								this.children().forEach(function(child) {
+									child.draw(ctx, viewPort);
+								});
+							},
+							parentOfType: function(type) {
+								var p = this.parent();
+								return p && (p.type === type ? p : p.parentOfType(type));
+							},
+							bounds: function() {
+								var l = this._left, t = this._top, r = 0, b = 0;
+								this.children().forEach(function(child) {
+									var cb = child.bounds();
+									l = Math.min(l, cb.l);
+									t = Math.min(t, cb.t);
+									r = Math.max(r, cb.l + cb.w);
+									b = Math.max(b, cb.t + cb.h);
+								});
+								return rect(l, t, r - l, b - t);
+							}
 						};
 
 						exports.derive = function(methods) {
-						    return util.derive(exports.prototype, methods);
+							return util.derive(exports.prototype, methods);
 						};
 
 						var generic = exports.derive({
-						    children: function() {
-						        return this._children;
-						    },
-						    parent: function() {
-						        return this._parent;
-						    },
-						    finalize: function(startDecrement, lengthIncrement) {
-						        var start = Number.MAX_VALUE, end = 0;
-						        this._children.forEach(function(child) {
-						            start = Math.min(start, child.ordinal);
-						            end = Math.max(end, child.ordinal + child.length);
-						        });
-						        Object.defineProperty(this, 'ordinal', { value: start - (startDecrement || 0) });
-						        Object.defineProperty(this, 'length', { value: (lengthIncrement || 0) + end - start });
-						    }
+							children: function() {
+								return this._children;
+							},
+							parent: function() {
+								return this._parent;
+							},
+							finalize: function(startDecrement, lengthIncrement) {
+								var start = Number.MAX_VALUE, end = 0;
+								this._children.forEach(function(child) {
+									start = Math.min(start, child.ordinal);
+									end = Math.max(end, child.ordinal + child.length);
+								});
+								Object.defineProperty(this, 'ordinal', { value: start - (startDecrement || 0) });
+								Object.defineProperty(this, 'length', { value: (lengthIncrement || 0) + end - start });
+							}
 						});
 
 						exports.generic = function(type, parent, left, top) {
-						    return Object.create(generic, {
-						        type: { value: type },
-						        _children: { value: [] },
-						        _parent: { value: parent },
-						        _left: { value: typeof left === 'number' ? left : Number.MAX_VALUE },
-						        _top: { value: typeof top === 'number' ? top : Number.MAX_VALUE }
-						    });
+							return Object.create(generic, {
+								type: { value: type },
+								_children: { value: [] },
+								_parent: { value: parent },
+								_left: { value: typeof left === 'number' ? left : Number.MAX_VALUE },
+								_top: { value: typeof top === 'number' ? top : Number.MAX_VALUE }
+							});
 						};
 					},
 					"part.js": function (exports, module, require) {
 						var text = require('./text');
 
 						var defaultInline = {
-						    measure: function(formatting) {
-						        var text = text.measure('?', formatting);
-						        return {
-						            width: text.width + 4,
-						            ascent: text.width + 2,
-						            descent: text.width + 2
-						        };
-						    },
-						    draw: function(ctx, x, y, width, ascent, descent) {
-						        ctx.fillStyle = 'silver';
-						        ctx.fillRect(x, y - ascent, width, ascent + descent);
-						        ctx.strokeRect(x, y - ascent, width, ascent + descent);
-						        ctx.fillStyle = 'black';
-						        ctx.fillText('?', x + 2, y);
-						    }
+							measure: function(formatting) {
+								var text = text.measure('?', formatting);
+								return {
+									width: text.width + 4,
+									ascent: text.width + 2,
+									descent: text.width + 2
+								};
+							},
+							draw: function(ctx, x, y, width, ascent, descent) {
+								ctx.fillStyle = 'silver';
+								ctx.fillRect(x, y - ascent, width, ascent + descent);
+								ctx.strokeRect(x, y - ascent, width, ascent + descent);
+								ctx.fillStyle = 'black';
+								ctx.fillText('?', x + 2, y);
+							}
 						};
 
 						/*  A Part is a section of a word with its own run, because a Word can span the
-						    boundaries between runs, so it may have several parts in its text or space
-						    arrays.
+							boundaries between runs, so it may have several parts in its text or space
+							arrays.
 
-						        run           - Run being measured.
-						        isNewLine     - True if this part only contain a newline (\n). This will be
-						                        the only Part in the Word, and this is the only way newlines
-						                        ever occur.
-						        width         - Width of the run
-						        ascent        - Distance from baseline to top
-						        descent       - Distance from baseline to bottom
+								run		   - Run being measured.
+								isNewLine	 - True if this part only contain a newline (\n). This will be
+												the only Part in the Word, and this is the only way newlines
+												ever occur.
+								width		 - Width of the run
+								ascent		- Distance from baseline to top
+								descent	   - Distance from baseline to bottom
 
-						    And methods:
+							And methods:
 
-						        draw(ctx, x, y)
-						                      - Draws the Word at x, y on the canvas context ctx. The y
-						                        coordinate is assumed to be the baseline. The call
-						                        prepareContext(ctx) will set the canvas up appropriately.
+								draw(ctx, x, y)
+											  - Draws the Word at x, y on the canvas context ctx. The y
+												coordinate is assumed to be the baseline. The call
+												prepareContext(ctx) will set the canvas up appropriately.
 						 */
 						var prototype = {
-						    draw: function(ctx, x, y) {
-						        if (typeof this.run.text === 'string') {
-						            text.draw(ctx, this.run.text, this.run, x, y, this.width, this.ascent, this.descent);
-						        } else if (this.code && this.code.draw) {
-						            ctx.save();
-						            this.code.draw(ctx, x, y, this.width, this.ascent, this.descent, this.run);
-						            ctx.restore();
-						        }
-						    }
+							draw: function(ctx, x, y) {
+								if (typeof this.run.text === 'string') {
+									text.draw(ctx, this.run.text, this.run, x, y, this.width, this.ascent, this.descent);
+								} else if (this.code && this.code.draw) {
+									ctx.save();
+									this.code.draw(ctx, x, y, this.width, this.ascent, this.descent, this.run);
+									ctx.restore();
+								}
+							}
 						};
 
 						module.exports = function(run, codes) {
 
-						    var m, isNewLine, code;
-						    if (typeof run.text === 'string') {
-						        isNewLine = (run.text.length === 1) && (run.text[0] === '\n');
-						        m = text.measure(isNewLine ? text.nbsp : run.text, run);
-						    } else {
-						        code = codes(run.text) || defaultInline;
-						        m = code.measure ? code.measure(run) : {
-						            width: 0, ascent: 0, descent: 0
-						        };
-						    }
+							var m, isNewLine, code;
+							if (typeof run.text === 'string') {
+								isNewLine = (run.text.length === 1) && (run.text[0] === '\n');
+								m = text.measure(isNewLine ? text.nbsp : run.text, run);
+							} else {
+								code = codes(run.text) || defaultInline;
+								m = code.measure ? code.measure(run) : {
+									width: 0, ascent: 0, descent: 0
+								};
+							}
 
-						    var part = Object.create(prototype, {
-						        run: { value: run },
-						        isNewLine: { value: isNewLine },
-						        width: { value: isNewLine ? 0 : m.width },
-						        ascent: { value: m.ascent },
-						        descent: { value: m.descent }
-						    });
-						    if (code) {
-						        Object.defineProperty(part, 'code', { value: code });
-						    }
-						    return part;
+							var part = Object.create(prototype, {
+								run: { value: run },
+								isNewLine: { value: isNewLine },
+								width: { value: isNewLine ? 0 : m.width },
+								ascent: { value: m.ascent },
+								descent: { value: m.descent }
+							});
+							if (code) {
+								Object.defineProperty(part, 'code', { value: code });
+							}
+							return part;
 						};
 					},
 					"positionedword.js": function (exports, module, require) {
@@ -2393,116 +2393,116 @@
 						var runs = require('./runs');
 
 						var newLineWidth = function(run) {
-						    return text.measure(text.enter, run).width;
+							return text.measure(text.enter, run).width;
 						};
 
 						var positionedChar = node.derive({
-						    bounds: function() {
-						        var wb = this.word.bounds();
-						        var width = this.word.word.isNewLine()
-						            ? newLineWidth(this.word.word.run)
-						            : this.width || this.part.width;
-						        return rect(wb.l + this.left, wb.t, width, wb.h);
-						    },
-						    parent: function() {
-						        return this.word;
-						    },
-						    byOrdinal: function() {
-						        return this;
-						    },
-						    byCoordinate: function(x, y) {
-						        if (x <= this.bounds().center().x) {
-						            return this;
-						        }
-						        return this.next();
-						    },
-						    type: 'character'
+							bounds: function() {
+								var wb = this.word.bounds();
+								var width = this.word.word.isNewLine()
+									? newLineWidth(this.word.word.run)
+									: this.width || this.part.width;
+								return rect(wb.l + this.left, wb.t, width, wb.h);
+							},
+							parent: function() {
+								return this.word;
+							},
+							byOrdinal: function() {
+								return this;
+							},
+							byCoordinate: function(x, y) {
+								if (x <= this.bounds().center().x) {
+									return this;
+								}
+								return this.next();
+							},
+							type: 'character'
 						});
 
 						/*  A positionedWord is just a realised Word plus a reference back to the containing Line and
-						    the left coordinate (x coordinate of the left edge of the word).
+							the left coordinate (x coordinate of the left edge of the word).
 
-						    It has methods:
+							It has methods:
 
-						        draw(ctx, x, y)
-						                  - Draw the word within its containing line, applying the specified (x, y)
-						                    offset.
-						        bounds()
-						                  - Returns a rect for the bounding box.
+								draw(ctx, x, y)
+										  - Draw the word within its containing line, applying the specified (x, y)
+											offset.
+								bounds()
+										  - Returns a rect for the bounding box.
 						 */
 						var prototype = node.derive({
-						    draw: function(ctx) {
-						        this.word.draw(ctx, this.line.left + this.left, this.line.baseline);
+							draw: function(ctx) {
+								this.word.draw(ctx, this.line.left + this.left, this.line.baseline);
 
-						        // Handy for showing how word boundaries work
-						        // var b = this.bounds();
-						        // ctx.strokeRect(b.l, b.t, b.w, b.h);
-						    },
-						    bounds: function() {
-						        return rect(
-						            this.line.left + this.left,
-						            this.line.baseline - this.line.ascent,
-						            this.word.isNewLine() ? newLineWidth(this.word.run) : this.width,
-						            this.line.ascent + this.line.descent);
-						    },
-						    parts: function(eachPart) {
-						        this.word.text.parts.some(eachPart) ||
-						        this.word.space.parts.some(eachPart);
-						    },
-						    realiseCharacters: function() {
-						        if (!this._characters) {
-						            var cache = [];
-						            var x = 0, self = this, ordinal = this.ordinal,
-						                codes = this.parentOfType('document').codes;
-						            this.parts(function(wordPart) {
-						                runs.pieceCharacters(function(char) {
-						                    var charRun = Object.create(wordPart.run);
-						                    charRun.text = char;
-						                    var p = part(charRun, codes);
-						                    cache.push(Object.create(positionedChar, {
-						                        left: { value: x },
-						                        part: { value: p },
-						                        word: { value: self },
-						                        ordinal: { value: ordinal },
-						                        length: { value: 1 }
-						                    }));
-						                    x += p.width;
-						                    ordinal++;
-						                }, wordPart.run.text);
-						            });
-						            // Last character is artificially widened to match the length of the
-						            // word taking into account (align === 'justify')
-						            var lastChar = cache[cache.length - 1];
-						            if (lastChar) {
-						                Object.defineProperty(lastChar, 'width',
-						                    { value: this.width - lastChar.left });
-						                if (this.word.isNewLine() || (this.word.code() && this.word.code().eof)) {
-						                    Object.defineProperty(lastChar, 'newLine', { value: true });
-						                }
-						            }
-						            this._characters = cache;
-						        }
-						    },
-						    children: function() {
-						        this.realiseCharacters();
-						        return this._characters;
-						    },
-						    parent: function() {
-						        return this.line;
-						    },
-						    type: 'word'
+								// Handy for showing how word boundaries work
+								// var b = this.bounds();
+								// ctx.strokeRect(b.l, b.t, b.w, b.h);
+							},
+							bounds: function() {
+								return rect(
+									this.line.left + this.left,
+									this.line.baseline - this.line.ascent,
+									this.word.isNewLine() ? newLineWidth(this.word.run) : this.width,
+									this.line.ascent + this.line.descent);
+							},
+							parts: function(eachPart) {
+								this.word.text.parts.some(eachPart) ||
+								this.word.space.parts.some(eachPart);
+							},
+							realiseCharacters: function() {
+								if (!this._characters) {
+									var cache = [];
+									var x = 0, self = this, ordinal = this.ordinal,
+										codes = this.parentOfType('document').codes;
+									this.parts(function(wordPart) {
+										runs.pieceCharacters(function(char) {
+											var charRun = Object.create(wordPart.run);
+											charRun.text = char;
+											var p = part(charRun, codes);
+											cache.push(Object.create(positionedChar, {
+												left: { value: x },
+												part: { value: p },
+												word: { value: self },
+												ordinal: { value: ordinal },
+												length: { value: 1 }
+											}));
+											x += p.width;
+											ordinal++;
+										}, wordPart.run.text);
+									});
+									// Last character is artificially widened to match the length of the
+									// word taking into account (align === 'justify')
+									var lastChar = cache[cache.length - 1];
+									if (lastChar) {
+										Object.defineProperty(lastChar, 'width',
+											{ value: this.width - lastChar.left });
+										if (this.word.isNewLine() || (this.word.code() && this.word.code().eof)) {
+											Object.defineProperty(lastChar, 'newLine', { value: true });
+										}
+									}
+									this._characters = cache;
+								}
+							},
+							children: function() {
+								this.realiseCharacters();
+								return this._characters;
+							},
+							parent: function() {
+								return this.line;
+							},
+							type: 'word'
 						});
 
 						module.exports = function(word, line, left, ordinal, width) {
-						    var pword = Object.create(prototype, {
-						        word: { value: word },
-						        line: { value: line },
-						        left: { value: left },
-						        width: { value: width }, // can be different to word.width if (align == 'justify')
-						        ordinal: { value: ordinal },
-						        length: { value: word.text.length + word.space.length }
-						    });
-						    return pword;
+							var pword = Object.create(prototype, {
+								word: { value: word },
+								line: { value: line },
+								left: { value: left },
+								width: { value: width }, // can be different to word.width if (align == 'justify')
+								ordinal: { value: ordinal },
+								length: { value: word.text.length + word.space.length }
+							});
+							return pword;
 						};
 					},
 					"range.js": function (exports, module, require) {
@@ -2510,222 +2510,222 @@
 						var runs = require('./runs');
 
 						function Range(doc, start, end) {
-						    this.doc = doc;
-						    this.start = start;
-						    this.end = end;
-						    if (start > end) {
-						        this.start = end;
-						        this.end = start;
-						    }
+							this.doc = doc;
+							this.start = start;
+							this.end = end;
+							if (start > end) {
+								this.start = end;
+								this.end = start;
+							}
 						}
 
 						Range.prototype.parts = function(emit, list) {
-						    list = list || this.doc.children();
-						    var self = this;
+							list = list || this.doc.children();
+							var self = this;
 
-						    list.some(function(item) {
-						        if (item.ordinal + item.length <= self.start) {
-						            return false;
-						        }
-						        if (item.ordinal >= self.end) {
-						            return true;
-						        }
-						        if (item.ordinal >= self.start &&
-						            item.ordinal + item.length <= self.end) {
-						            emit(item);
-						        } else {
-						            self.parts(emit, item.children());
-						        }
-						    });
+							list.some(function(item) {
+								if (item.ordinal + item.length <= self.start) {
+									return false;
+								}
+								if (item.ordinal >= self.end) {
+									return true;
+								}
+								if (item.ordinal >= self.start &&
+									item.ordinal + item.length <= self.end) {
+									emit(item);
+								} else {
+									self.parts(emit, item.children());
+								}
+							});
 						};
 
 						Range.prototype.clear = function() {
-						    return this.setText([]);
+							return this.setText([]);
 						};
 
 						Range.prototype.setText = function(text) {
-						    return this.doc.splice(this.start, this.end, text);
+							return this.doc.splice(this.start, this.end, text);
 						};
 
 						Range.prototype.runs = function(emit) {
-						    this.doc.runs(emit, this);
+							this.doc.runs(emit, this);
 						};
 
 						Range.prototype.plainText = function() {
-						    return per(this.runs, this).map(runs.getPlainText).all().join('');
+							return per(this.runs, this).map(runs.getPlainText).all().join('');
 						};
 
 						Range.prototype.save = function() {
-						    return per(this.runs, this).per(runs.consolidate()).all();
+							return per(this.runs, this).per(runs.consolidate()).all();
 						};
 
 						Range.prototype.getFormatting = function() {
-						    var range = this;
-						    if (range.start === range.end) {
-						        var pos = range.start;
-						        // take formatting of character before, if any, because that's
-						        // where plain text picks up formatting when inserted
-						        if (pos > 0) {
-						            pos--;
-						        }
-						        range.start = pos;
-						        range.end = pos + 1;
-						    }
-						    return per(range.runs, range).reduce(runs.merge).last() || runs.defaultFormatting;
+							var range = this;
+							if (range.start === range.end) {
+								var pos = range.start;
+								// take formatting of character before, if any, because that's
+								// where plain text picks up formatting when inserted
+								if (pos > 0) {
+									pos--;
+								}
+								range.start = pos;
+								range.end = pos + 1;
+							}
+							return per(range.runs, range).reduce(runs.merge).last() || runs.defaultFormatting;
 						};
 
 						Range.prototype.setFormatting = function(attribute, value) {
-						    var range = this;
-						    if (attribute === 'align') {
-						        // Special case: expand selection to surrounding paragraphs
-						        range = range.doc.paragraphRange(range.start, range.end);
-						    }
-						    if (range.start === range.end) {
-						        range.doc.modifyInsertFormatting(attribute, value);
-						    } else {
-						        var saved = range.save();
-						        var template = {};
-						        template[attribute] = value;
-						        runs.format(saved, template);
-						        range.setText(saved);
-						    }
+							var range = this;
+							if (attribute === 'align') {
+								// Special case: expand selection to surrounding paragraphs
+								range = range.doc.paragraphRange(range.start, range.end);
+							}
+							if (range.start === range.end) {
+								range.doc.modifyInsertFormatting(attribute, value);
+							} else {
+								var saved = range.save();
+								var template = {};
+								template[attribute] = value;
+								runs.format(saved, template);
+								range.setText(saved);
+							}
 						};
 
 						module.exports = function(doc, start, end) {
-						    return new Range(doc, start, end);
+							return new Range(doc, start, end);
 						};
 					},
 					"rect.js": function (exports, module, require) {
 						
 						var prototype = {
-						    contains: function(x, y) {
-						        return x >= this.l && x < (this.l + this.w) &&
-						            y >= this.t && y < (this.t + this.h);
+							contains: function(x, y) {
+								return x >= this.l && x < (this.l + this.w) &&
+									y >= this.t && y < (this.t + this.h);
 
-						    },
-						    stroke: function(ctx) {
-						        ctx.strokeRect(this.l, this.t, this.w, this.h);
-						    },
-						    fill: function(ctx) {
-						        ctx.fillRect(this.l, this.t, this.w, this.h);
-						    },
-						    offset: function(x, y) {
-						        return rect(this.l + x, this.t + y, this.w, this.h);
-						    },
-						    equals: function(other) {
-						        return this.l === other.l && this.t === other.t &&
-						               this.w === other.w && this.h === other.h;
-						    },
-						    center: function() {
-						        return { x: this.l + this.w/2, y: this.t + this.h/2 };
-						    }
+							},
+							stroke: function(ctx) {
+								ctx.strokeRect(this.l, this.t, this.w, this.h);
+							},
+							fill: function(ctx) {
+								ctx.fillRect(this.l, this.t, this.w, this.h);
+							},
+							offset: function(x, y) {
+								return rect(this.l + x, this.t + y, this.w, this.h);
+							},
+							equals: function(other) {
+								return this.l === other.l && this.t === other.t &&
+									   this.w === other.w && this.h === other.h;
+							},
+							center: function() {
+								return { x: this.l + this.w/2, y: this.t + this.h/2 };
+							}
 						};
 
 						var rect = module.exports = function(l, t, w, h) {
-						    return Object.create(prototype, {
-						        l: { value: l },
-						        t: { value: t },
-						        w: { value: w },
-						        h: { value: h },
-						        r: { value: l + w },
-						        b: { value: t + h }
-						    });
+							return Object.create(prototype, {
+								l: { value: l },
+								t: { value: t },
+								w: { value: w },
+								h: { value: h },
+								r: { value: l + w },
+								b: { value: t + h }
+							});
 						};
 					},
 					"runs.js": function (exports, module, require) {
 						exports.formattingKeys = [ 'bold', 'italic', 'underline', 'strikeout', 'color', 'font', 'size', 'align', 'script' ];
 
 						exports.defaultFormatting = {
-						    size: 10,
-						    font: 'sans-serif',
-						    color: 'black',
-						    bold: false,
-						    italic: false,
-						    underline: false,
-						    strikeout: false,
-						    align: 'left',
-						    script: 'normal'
+							size: 10,
+							font: 'sans-serif',
+							color: 'black',
+							bold: false,
+							italic: false,
+							underline: false,
+							strikeout: false,
+							align: 'left',
+							script: 'normal'
 						};
 
 						exports.sameFormatting = function(run1, run2) {
-						    return exports.formattingKeys.every(function(key) {
-						        return run1[key] === run2[key];
-						    })
+							return exports.formattingKeys.every(function(key) {
+								return run1[key] === run2[key];
+							})
 						};
 
 						exports.clone = function(run) {
-						    var result = { text: run.text };
-						    exports.formattingKeys.forEach(function(key) {
-						        var val = run[key];
-						        if (val && val != exports.defaultFormatting[key]) {
-						            result[key] = val;
-						        }
-						    });
-						    return result;
+							var result = { text: run.text };
+							exports.formattingKeys.forEach(function(key) {
+								var val = run[key];
+								if (val && val != exports.defaultFormatting[key]) {
+									result[key] = val;
+								}
+							});
+							return result;
 						};
 
 						exports.multipleValues = {};
 
 						exports.merge = function(run1, run2) {
-						    if (arguments.length === 1) {
-						        return Array.isArray(run1) ? run1.reduce(exports.merge) : run1;
-						    }
-						    if (arguments.length > 2) {
-						        return exports.merge(Array.prototype.slice.call(arguments, 0));
-						    }
-						    var merged = {};
-						    exports.formattingKeys.forEach(function(key) {
-						        if (key in run1 || key in run2) {
-						            if (run1[key] === run2[key]) {
-						                merged[key] = run1[key];
-						            } else {
-						                merged[key] = exports.multipleValues;
-						            }
-						        }
-						    });
-						    return merged;
+							if (arguments.length === 1) {
+								return Array.isArray(run1) ? run1.reduce(exports.merge) : run1;
+							}
+							if (arguments.length > 2) {
+								return exports.merge(Array.prototype.slice.call(arguments, 0));
+							}
+							var merged = {};
+							exports.formattingKeys.forEach(function(key) {
+								if (key in run1 || key in run2) {
+									if (run1[key] === run2[key]) {
+										merged[key] = run1[key];
+									} else {
+										merged[key] = exports.multipleValues;
+									}
+								}
+							});
+							return merged;
 						};
 
 						exports.format = function(run, template) {
-						    if (Array.isArray(run)) {
-						        run.forEach(function(r) {
-						            exports.format(r, template);
-						        });
-						    } else {
-						        Object.keys(template).forEach(function(key) {
-						            if (template[key] !== exports.multipleValues) {
-						                run[key] = template[key];
-						            }
-						        });
-						    }
+							if (Array.isArray(run)) {
+								run.forEach(function(r) {
+									exports.format(r, template);
+								});
+							} else {
+								Object.keys(template).forEach(function(key) {
+									if (template[key] !== exports.multipleValues) {
+										run[key] = template[key];
+									}
+								});
+							}
 						};
 
 						exports.consolidate = function() {
-						    var current;
-						    return function(emit, run) {
-						        if (!current || !exports.sameFormatting(current, run) ||
-						            (typeof current.text != 'string') ||
-						            (typeof run.text != 'string')) {
-						            current = exports.clone(run);
-						            emit(current);
-						        } else {
-						            current.text += run.text;
-						        }
-						    };
+							var current;
+							return function(emit, run) {
+								if (!current || !exports.sameFormatting(current, run) ||
+									(typeof current.text != 'string') ||
+									(typeof run.text != 'string')) {
+									current = exports.clone(run);
+									emit(current);
+								} else {
+									current.text += run.text;
+								}
+							};
 						};
 
 						exports.getPlainText = function(run) {
-						    if (typeof run.text === 'string') {
-						        return run.text;
-						    }
-						    if (Array.isArray(run.text)) {
-						        var str = [];
-						        run.text.forEach(function(piece) {
-						            str.push(exports.getPiecePlainText(piece));
-						        });
-						        return str.join('');
-						    }
-						    return '_';
+							if (typeof run.text === 'string') {
+								return run.text;
+							}
+							if (Array.isArray(run.text)) {
+								var str = [];
+								run.text.forEach(function(piece) {
+									str.push(exports.getPiecePlainText(piece));
+								});
+								return str.join('');
+							}
+							return '_';
 						};
 
 						/*  The text property of a run can be an ordinary string, or a "character object",
@@ -2736,73 +2736,73 @@
 						 We abstract over this to provide the same string-like operations regardless.
 						 */
 						exports.getPieceLength = function(piece) {
-						    return piece.length || 1; // either a string or something like a character
+							return piece.length || 1; // either a string or something like a character
 						};
 
 						exports.getPiecePlainText = function(piece) {
-						    return piece.length ? piece : '_';
+							return piece.length ? piece : '_';
 						};
 
 						exports.getTextLength = function(text) {
-						    if (typeof text === 'string') {
-						        return text.length;
-						    }
-						    if (Array.isArray(text)) {
-						        var length = 0;
-						        text.forEach(function(piece) {
-						            length += exports.getPieceLength(piece);
-						        });
-						        return length;
-						    }
-						    return 1;
+							if (typeof text === 'string') {
+								return text.length;
+							}
+							if (Array.isArray(text)) {
+								var length = 0;
+								text.forEach(function(piece) {
+									length += exports.getPieceLength(piece);
+								});
+								return length;
+							}
+							return 1;
 						};
 
 						exports.getSubText = function(emit, text, start, count) {
-						    if (count === 0) {
-						        return;
-						    }
-						    if (typeof text === 'string') {
-						        emit(text.substr(start, count));
-						        return;
-						    }
-						    if (Array.isArray(text)) {
-						        var pos = 0;
-						        text.some(function(piece) {
-						            if (count <= 0) {
-						                return true;
-						            }
-						            var pieceLength = exports.getPieceLength(piece);
-						            if (pos + pieceLength > start) {
-						                if (pieceLength === 1) {
-						                    emit(piece);
-						                    count -= 1;
-						                } else {
-						                    var str = piece.substr(Math.max(0, start - pos), count);
-						                    emit(str);
-						                    count -= str.length;
-						                }
-						            }
-						            pos += pieceLength;
-						        });
-						        return;
-						    }
-						    emit(text);
+							if (count === 0) {
+								return;
+							}
+							if (typeof text === 'string') {
+								emit(text.substr(start, count));
+								return;
+							}
+							if (Array.isArray(text)) {
+								var pos = 0;
+								text.some(function(piece) {
+									if (count <= 0) {
+										return true;
+									}
+									var pieceLength = exports.getPieceLength(piece);
+									if (pos + pieceLength > start) {
+										if (pieceLength === 1) {
+											emit(piece);
+											count -= 1;
+										} else {
+											var str = piece.substr(Math.max(0, start - pos), count);
+											emit(str);
+											count -= str.length;
+										}
+									}
+									pos += pieceLength;
+								});
+								return;
+							}
+							emit(text);
 						};
 
 						exports.getTextChar = function(text, offset) {
-						    var result;
-						    exports.getSubText(function(c) { result = c }, text, offset, 1);
-						    return result;
+							var result;
+							exports.getSubText(function(c) { result = c }, text, offset, 1);
+							return result;
 						};
 
 						exports.pieceCharacters = function(each, piece) {
-						    if (typeof piece === 'string') {
-						        for (var c = 0; c < piece.length; c++) {
-						            each(piece[c]);
-						        }
-						    } else {
-						        each(piece);
-						    }
+							if (typeof piece === 'string') {
+								for (var c = 0; c < piece.length; c++) {
+									each(piece[c]);
+								}
+							} else {
+								each(piece);
+							}
 						};
 					},
 					"split.js": function (exports, module, require) {
@@ -3044,28 +3044,28 @@
 					},
 					"util.js": function (exports, module, require) {
 						exports.event = function() {
-						    var handlers = [];
+							var handlers = [];
 
-						    var subscribe = function(handler) {
-						        handlers.push(handler);
-						    };
+							var subscribe = function(handler) {
+								handlers.push(handler);
+							};
 
-						    subscribe.fire = function() {
-						        var args = Array.prototype.slice.call(arguments, 0);
-						        handlers.forEach(function(handler) {
-						            handler.apply(null, args);
-						        });
-						    };
+							subscribe.fire = function() {
+								var args = Array.prototype.slice.call(arguments, 0);
+								handlers.forEach(function(handler) {
+									handler.apply(null, args);
+								});
+							};
 
-						    return subscribe;
+							return subscribe;
 						};
 
 						exports.derive = function(prototype, methods) {
-						    var properties = {};
-						    Object.keys(methods).forEach(function(name) {
-						        properties[name] = { value: methods[name] };
-						    });
-						    return Object.create(prototype, properties);
+							var properties = {};
+							Object.keys(methods).forEach(function(name) {
+								properties[name] = { value: methods[name] };
+							});
+							return Object.create(prototype, properties);
 						};
 					},
 					"word.js": function (exports, module, require) {
@@ -3075,232 +3075,232 @@
 
 						/*  A Word has the following properties:
 
-						        text      - Section (see below) for non-space portion of word.
-						        space     - Section for trailing space portion of word.
-						        ascent    - Ascent (distance from baseline to top) for whole word
-						        descent   - Descent (distance from baseline to bottom) for whole word
-						        width     - Width of the whole word (including trailing space)
+								text	  - Section (see below) for non-space portion of word.
+								space	 - Section for trailing space portion of word.
+								ascent	- Ascent (distance from baseline to top) for whole word
+								descent   - Descent (distance from baseline to bottom) for whole word
+								width	 - Width of the whole word (including trailing space)
 
-						    It has methods:
+							It has methods:
 
-						        isNewLine()
-						                  - Returns true if the Word represents a newline. Newlines are
-						                    always represented by separate words.
+								isNewLine()
+										  - Returns true if the Word represents a newline. Newlines are
+											always represented by separate words.
 
-						        draw(ctx, x, y)
-						                  - Draws the Word at x, y on the canvas context ctx.
+								draw(ctx, x, y)
+										  - Draws the Word at x, y on the canvas context ctx.
 
-						    Note: a section (i.e. text and space) is an object containing:
+							Note: a section (i.e. text and space) is an object containing:
 
-						        parts     - array of Parts
-						        ascent    - Ascent (distance from baseline to top) for whole section
-						        descent   - Descent (distance from baseline to bottom) for whole section
-						        width     - Width of the whole section
+								parts	 - array of Parts
+								ascent	- Ascent (distance from baseline to top) for whole section
+								descent   - Descent (distance from baseline to bottom) for whole section
+								width	 - Width of the whole section
 						 */
 
 						var prototype = {
-						    isNewLine: function() {
-						        return this.text.parts.length == 1 && this.text.parts[0].isNewLine;
-						    },
-						    code: function() {
-						        return this.text.parts.length == 1 && this.text.parts[0].code;
-						    },
-						    codeFormatting: function() {
-						        return this.text.parts.length == 1 && this.text.parts[0].run;
-						    },
-						    draw: function(ctx, x, y) {
-						        per(this.text.parts).concat(this.space.parts).forEach(function(part) {
-						            part.draw(ctx, x, y);
-						            x += part.width;
-						        });
-						    },
-						    plainText: function() {
-						        return this.text.plainText + this.space.plainText;
-						    },
-						    align: function() {
-						        var first = this.text.parts[0];
-						        return first ? first.run.align : 'left';
-						    },
-						    runs: function(emit, range) {
-						        var start = range && range.start || 0,
-						            end = range && range.end;
-						        if (typeof end !== 'number') {
-						            end = Number.MAX_VALUE;
-						        }
-						        [this.text, this.space].forEach(function(section) {
-						            section.parts.some(function(part) {
-						                if (start >= end || end <= 0) {
-						                    return true;
-						                }
-						                var run = part.run, text = run.text;
-						                if (typeof text === 'string') {
-						                    if (start <= 0 && end >= text.length) {
-						                        emit(run);
-						                    } else if (start < text.length) {
-						                        var pieceRun = Object.create(run);
-						                        var firstChar = Math.max(0, start);
-						                        pieceRun.text = text.substr(
-						                            firstChar,
-						                            Math.min(text.length, end - firstChar)
-						                        );
-						                        emit(pieceRun);
-						                    }
-						                    start -= text.length;
-						                    end -= text.length;
-						                } else {
-						                    if (start <= 0 && end >= 1) {
-						                        emit(run);
-						                    }
-						                    start--;
-						                    end--;
-						                }
-						            });
-						        });
-						    }
+							isNewLine: function() {
+								return this.text.parts.length == 1 && this.text.parts[0].isNewLine;
+							},
+							code: function() {
+								return this.text.parts.length == 1 && this.text.parts[0].code;
+							},
+							codeFormatting: function() {
+								return this.text.parts.length == 1 && this.text.parts[0].run;
+							},
+							draw: function(ctx, x, y) {
+								per(this.text.parts).concat(this.space.parts).forEach(function(part) {
+									part.draw(ctx, x, y);
+									x += part.width;
+								});
+							},
+							plainText: function() {
+								return this.text.plainText + this.space.plainText;
+							},
+							align: function() {
+								var first = this.text.parts[0];
+								return first ? first.run.align : 'left';
+							},
+							runs: function(emit, range) {
+								var start = range && range.start || 0,
+									end = range && range.end;
+								if (typeof end !== 'number') {
+									end = Number.MAX_VALUE;
+								}
+								[this.text, this.space].forEach(function(section) {
+									section.parts.some(function(part) {
+										if (start >= end || end <= 0) {
+											return true;
+										}
+										var run = part.run, text = run.text;
+										if (typeof text === 'string') {
+											if (start <= 0 && end >= text.length) {
+												emit(run);
+											} else if (start < text.length) {
+												var pieceRun = Object.create(run);
+												var firstChar = Math.max(0, start);
+												pieceRun.text = text.substr(
+													firstChar,
+													Math.min(text.length, end - firstChar)
+												);
+												emit(pieceRun);
+											}
+											start -= text.length;
+											end -= text.length;
+										} else {
+											if (start <= 0 && end >= 1) {
+												emit(run);
+											}
+											start--;
+											end--;
+										}
+									});
+								});
+							}
 						};
 
 						var section = function(runEmitter, codes) {
-						    var s = {
-						        parts: per(runEmitter).map(function(p) {
-						            return part(p, codes);
-						        }).all(),
-						        ascent: 0,
-						        descent: 0,
-						        width: 0,
-						        length: 0,
-						        plainText: ''
-						    };
-						    s.parts.forEach(function(p) {
-						        s.ascent = Math.max(s.ascent, p.ascent);
-						        s.descent = Math.max(s.descent, p.descent);
-						        s.width += p.width;
-						        s.length += runs.getPieceLength(p.run.text);
-						        s.plainText += runs.getPiecePlainText(p.run.text);
-						    });
-						    return s;
+							var s = {
+								parts: per(runEmitter).map(function(p) {
+									return part(p, codes);
+								}).all(),
+								ascent: 0,
+								descent: 0,
+								width: 0,
+								length: 0,
+								plainText: ''
+							};
+							s.parts.forEach(function(p) {
+								s.ascent = Math.max(s.ascent, p.ascent);
+								s.descent = Math.max(s.descent, p.descent);
+								s.width += p.width;
+								s.length += runs.getPieceLength(p.run.text);
+								s.plainText += runs.getPiecePlainText(p.run.text);
+							});
+							return s;
 						};
 
 						module.exports = function(coords, codes) {
-						    var text, space;
-						    if (!coords) {
-						        // special end-of-document marker, mostly like a newline with no formatting
-						        text = [{ text: '\n' }];
-						        space = [];
-						    } else {
-						        text = coords.text.cut(coords.spaces);
-						        space = coords.spaces.cut(coords.end);
-						    }
-						    text = section(text, codes);
-						    space = section(space, codes);
-						    var word = Object.create(prototype, {
-						        text: { value: text },
-						        space: { value: space },
-						        ascent: { value: Math.max(text.ascent, space.ascent) },
-						        descent: { value: Math.max(text.descent, space.descent) },
-						        width: { value: text.width + space.width, configurable: true },
-						        length: { value: text.length + space.length }
-						    });
-						    if (!coords) {
-						        Object.defineProperty(word, 'eof', { value: true });
-						    }
-						    return word;
+							var text, space;
+							if (!coords) {
+								// special end-of-document marker, mostly like a newline with no formatting
+								text = [{ text: '\n' }];
+								space = [];
+							} else {
+								text = coords.text.cut(coords.spaces);
+								space = coords.spaces.cut(coords.end);
+							}
+							text = section(text, codes);
+							space = section(space, codes);
+							var word = Object.create(prototype, {
+								text: { value: text },
+								space: { value: space },
+								ascent: { value: Math.max(text.ascent, space.ascent) },
+								descent: { value: Math.max(text.descent, space.descent) },
+								width: { value: text.width + space.width, configurable: true },
+								length: { value: text.length + space.length }
+							});
+							if (!coords) {
+								Object.defineProperty(word, 'eof', { value: true });
+							}
+							return word;
 						};
 					},
 					"wrap.js": function (exports, module, require) {
 						var line = require('./line');
 
 						/*  A stateful transformer function that accepts words and emits lines. If the first word
-						    is too wide, it will overhang; if width is zero or negative, there will be one word on
-						    each line.
+							is too wide, it will overhang; if width is zero or negative, there will be one word on
+							each line.
 
-						    The y-coordinate is the top of the first line, not the baseline.
+							The y-coordinate is the top of the first line, not the baseline.
 
-						    Returns a stream of line objects, each containing an array of positionedWord objects.
+							Returns a stream of line objects, each containing an array of positionedWord objects.
 						 */
 
 						module.exports = function(left, top, width, ordinal, parent,
-						                          includeTerminator, initialAscent, initialDescent) {
+												  includeTerminator, initialAscent, initialDescent) {
 
-						    var lineBuffer = [],
-						        lineWidth = 0,
-						        maxAscent = initialAscent || 0,
-						        maxDescent = initialDescent || 0,
-						        quit,
-						        lastNewLineHeight = 0,
-						        y = top;
+							var lineBuffer = [],
+								lineWidth = 0,
+								maxAscent = initialAscent || 0,
+								maxDescent = initialDescent || 0,
+								quit,
+								lastNewLineHeight = 0,
+								y = top;
 
-						    var store = function(word, emit) {
-						        lineBuffer.push(word);
-						        lineWidth += word.width;
-						        maxAscent = Math.max(maxAscent, word.ascent);
-						        maxDescent = Math.max(maxDescent, word.descent);
-						        if (word.isNewLine()) {
-						            send(emit);
-						            lastNewLineHeight = word.ascent + word.descent;
-						        }
-						    };
+							var store = function(word, emit) {
+								lineBuffer.push(word);
+								lineWidth += word.width;
+								maxAscent = Math.max(maxAscent, word.ascent);
+								maxDescent = Math.max(maxDescent, word.descent);
+								if (word.isNewLine()) {
+									send(emit);
+									lastNewLineHeight = word.ascent + word.descent;
+								}
+							};
 
-						    var send = function(emit) {
-						        if (quit || lineBuffer.length === 0) {
-						            return;
-						        }
-						        var l = line(parent, left, width, y + maxAscent, maxAscent, maxDescent, lineBuffer, ordinal);
-						        ordinal += l.length;
-						        quit = emit(l);
-						        y += (maxAscent + maxDescent);
-						        lineBuffer.length = 0;
-						        lineWidth = maxAscent = maxDescent = 0;
-						    };
+							var send = function(emit) {
+								if (quit || lineBuffer.length === 0) {
+									return;
+								}
+								var l = line(parent, left, width, y + maxAscent, maxAscent, maxDescent, lineBuffer, ordinal);
+								ordinal += l.length;
+								quit = emit(l);
+								y += (maxAscent + maxDescent);
+								lineBuffer.length = 0;
+								lineWidth = maxAscent = maxDescent = 0;
+							};
 
-						    var consumer = null;
+							var consumer = null;
 
-						    return function(emit, inputWord) {
-						        if (consumer) {
-						            lastNewLineHeight = 0;
-						            var node = consumer(inputWord);
-						            if (node) {
-						                consumer = null;
-						                ordinal += node.length;
-						                y += node.bounds().h;
-						                Object.defineProperty(node, 'block', { value: true });
-						                emit(node);
-						            }
-						        } else {
-						            var code = inputWord.code();
-						            if (code && code.block) {
-						                if (lineBuffer.length) {
-						                    send(emit);
-						                } else {
-						                    y += lastNewLineHeight;
-						                }
-						                consumer = code.block(left, y, width, ordinal, parent, inputWord.codeFormatting());
-						                lastNewLineHeight = 0;
-						            }
-						            else if (code && code.eof || inputWord.eof) {
-						                if (!code || (includeTerminator && includeTerminator(code))) {
-						                    store(inputWord, emit);
-						                }
-						                if (!lineBuffer.length) {
-						                    emit(y + lastNewLineHeight - top);
-						                } else {
-						                    send(emit);
-						                    emit(y - top);
-						                }
-						                quit = true;
-						            } else {
-						                lastNewLineHeight = 0;
-						                if (!lineBuffer.length) {
-						                    store(inputWord, emit);
-						                } else {
-						                    if (lineWidth + inputWord.text.width > width) {
-						                        send(emit);
-						                    }
-						                    store(inputWord, emit);
-						                }
-						            }
-						        }
-						        return quit;
-						    };
+							return function(emit, inputWord) {
+								if (consumer) {
+									lastNewLineHeight = 0;
+									var node = consumer(inputWord);
+									if (node) {
+										consumer = null;
+										ordinal += node.length;
+										y += node.bounds().h;
+										Object.defineProperty(node, 'block', { value: true });
+										emit(node);
+									}
+								} else {
+									var code = inputWord.code();
+									if (code && code.block) {
+										if (lineBuffer.length) {
+											send(emit);
+										} else {
+											y += lastNewLineHeight;
+										}
+										consumer = code.block(left, y, width, ordinal, parent, inputWord.codeFormatting());
+										lastNewLineHeight = 0;
+									}
+									else if (code && code.eof || inputWord.eof) {
+										if (!code || (includeTerminator && includeTerminator(code))) {
+											store(inputWord, emit);
+										}
+										if (!lineBuffer.length) {
+											emit(y + lastNewLineHeight - top);
+										} else {
+											send(emit);
+											emit(y - top);
+										}
+										quit = true;
+									} else {
+										lastNewLineHeight = 0;
+										if (!lineBuffer.length) {
+											store(inputWord, emit);
+										} else {
+											if (lineWidth + inputWord.text.width > width) {
+												send(emit);
+											}
+											store(inputWord, emit);
+										}
+									}
+								}
+								return quit;
+							};
 						};
 					}
 				},
@@ -3386,12 +3386,38 @@
 							 * @name hp_SE_ExecCommand.js
 							 */
 							nhn.husky.SE2M_ExecCommand = jindo.$Class({
-								name:"SE2M_ExecCommand",
+								name: "SE2M_ExecCommand",
 
 								$init: function(elAppContainer) {
+
+									var self = this;
+									
 									this.$file = $("input[type=file]");
+									
 									this.$file.on("change", function() {
-										//document.loadForm.submit();
+										console.log("onchange() is called...");
+
+										var data = new FormData(document.loadForm);
+
+										$.ajax({
+											type: "POST",
+											enctype: 'multipart/form-data',
+											url: "/load",
+											data: data,
+											processData: false,
+											contentType: false,
+											cache: false,
+											success: function(data) {
+												console.log("success() is called...");
+												console.log("data.status = " + data.status);
+												//console.log("data.data = " + data.data);
+												self.oApp.exec("PASTE_HTML", [ data.data ]);
+											},
+											error: function(e) {
+												console.log("error() is called...");
+											}
+										});
+										
 									});
 								},
 
@@ -3505,10 +3531,9 @@
 
 								$ON_PASTE_HTML: function(sHTML, oPSelection, htOption) {
 									//console.log("$ON_PASTE_HTML is called...");
-									var runs = carota.html.parse(sHTML, {
-										//carota: { color: 'orange', bold: true, size: 14 }
-									});
-									this.doc.load(runs);
+									/* var runs = carota.html.parse(sHTML, {});
+									this.doc.load(runs); */
+									
 									this.oApp.exec("EVENT_WINDOW_RESIZE");
 									//this.oApp.exec("EDITING_AREA_PAINT");
 									//this.oApp.exec("POSITION_CENTER");

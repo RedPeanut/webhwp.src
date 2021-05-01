@@ -8,15 +8,16 @@
 		"url": "https://github.com/RedPeanut/webhwp.git"
 	},
 	"scripts": {
-		"prepublish": "node make",
-		"dev": "nodemon server.js"
+		"predev": "node make",
+		"dev": "nodemon --inspect server.js"
 	},
 	"dependencies": {
+		"ejs": "^3.1.6",
+		"event-stream": "^3.1.1",
 		"express": "^4.17.1",
 		"multer": "^1.4.2",
 		"per": "0.1.7",
-		"xmldoc": "^0.1.2",
-		"event-stream": "^3.1.1"
+		"xmldoc": "^0.1.2"
 	},
 	"devDependencies": {
 		"node-minify": "^0.8.1",

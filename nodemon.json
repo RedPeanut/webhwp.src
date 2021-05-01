@@ -1,7 +1,13 @@
 {
 	"watch": [
-		"*.js",
-		"workspace/src/**/*.js",
-		"workspace/static/**/*.js"
-	]
+		"**/*.js"
+	],
+	"ignore": [
+		"workspace/static/js/webhwp-*.js",
+		"workspace/test/**/*.js"
+	],
+	"events": {
+		"restart": "npm run predev",
+		"config:update": ""
+	}
 }

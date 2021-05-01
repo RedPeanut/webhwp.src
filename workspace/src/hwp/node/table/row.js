@@ -1,4 +1,4 @@
-var node = require('../node');
+var node = require('../../node');
 
 var prototype = node.derive({
 	children: function() {

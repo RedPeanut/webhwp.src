@@ -75,10 +75,9 @@ nhn.husky.SE_EditingArea = jindo.$Class({
 
 	$ON_PASTE_HTML: function(sHTML, oPSelection, htOption) {
 		//console.log("$ON_PASTE_HTML is called...");
-		var runs = carota.html.parse(sHTML, {
-			//carota: { color: 'orange', bold: true, size: 14 }
-		});
-		this.doc.load(runs);
+		/* var runs = carota.html.parse(sHTML, {});
+		this.doc.load(runs); */
+		
 		this.oApp.exec("EVENT_WINDOW_RESIZE");
 		//this.oApp.exec("EDITING_AREA_PAINT");
 		//this.oApp.exec("POSITION_CENTER");

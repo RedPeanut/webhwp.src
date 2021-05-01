@@ -1,33 +1,67 @@
-var express = require('express');
-var webmake = require('webmake');
-var fs = require('fs');
+var express = require("express");
+//var webmake = require("webmake");
+var multer = require('multer');
+var fs = require("fs");
+var path = require("path");
+var hwp = require('./workspace/src/node-hwp/lib/hwp');
 
 var app = express();
 
-/* app.get('js/webhwp.js', function(req, res) {
-	res.writeHead(200, {
-		'Content-Type': 'application/javascript; charset=utf-8',
-		'Cache-Control': 'no-cache'
-	});
-
-	webmake('workspace/src/bundle/index.js', { cache: true }, function (err, content) {
-		if (err) {
-			res.end('document.write(' + JSON.stringify(err.message) + ');');
-		} else {
-			res.end(content);
-		}
-	});
-}); */
+app.engine("html", require("ejs").renderFile);
+app.set("view engine", "html");
+app.set("views", __dirname + "/workspace/templates");
 
 app.get("/", (req, res) => {
-	res.send("/ is called...");
-	
+	//res.send("/ is called...");
+	//res.render("index", { title: "제목이들어갑니다", message: "메세지가들어갑니다"});
+	//res.redirect("/load");
+	res.render("index");
 });
 
-app.get("/load", (req, res) => {
-	res.send("/load is called...");
-    //console.log("fs = " + fs);
+fs.readdir("upload", (error) => {
+	if (error) {
+		fs.mkdirSync("upload");
+	}
 });
+
+const upload = multer(
+	{
+		storage: multer.diskStorage({
+			destination(req, file, cb) {
+				console.log("destination() is called...");
+				cb(null, "upload/");
+			},
+			filename(req, file, cb) {
+				console.log("filename() is called...");
+				const ext = path.extname(file.originalname);
+				cb(null, file.originalname);
+			}
+		}),
+		//limits: {fileSize:5*1024*1024},
+	}
+);
+
+var loadCb = function(req, res) {
+	//res.send("/load is called...");
+	console.log("loadCb() is called...");
+	console.log("req.file.filename = " + req.file.filename);
+	if (req.file != null && req.file.filename != null && req.file.filename != "") {
+		hwp.open("upload/" + req.file.filename, function(err, doc) {
+			//console.log("doc._hml = " + doc._hml);
+			//console.log(doc.toHML());
+			console.log(doc != null);
+			//var _doc = doc;
+			res.json({
+				status: "success",
+				data: doc.toHML()
+			});
+		});
+	}
+	//res.render("index", {});
+}
+
+//app.get("/load", loadCb);
+app.post("/load", upload.single("file"), loadCb);
 
 app.post("/download", (req, res) => {
 	res.send("/download is called...");

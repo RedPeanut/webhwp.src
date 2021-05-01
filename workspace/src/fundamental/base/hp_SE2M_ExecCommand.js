@@ -21,12 +21,38 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  * @name hp_SE_ExecCommand.js
  */
 nhn.husky.SE2M_ExecCommand = jindo.$Class({
-	name:"SE2M_ExecCommand",
+	name: "SE2M_ExecCommand",
 
 	$init: function(elAppContainer) {
+
+		var self = this;
+		
 		this.$file = $("input[type=file]");
+		
 		this.$file.on("change", function() {
-			//document.loadForm.submit();
+			console.log("onchange() is called...");
+
+			var data = new FormData(document.loadForm);
+
+			$.ajax({
+				type: "POST",
+				enctype: 'multipart/form-data',
+				url: "/load",
+				data: data,
+				processData: false,
+				contentType: false,
+				cache: false,
+				success: function(data) {
+					console.log("success() is called...");
+					console.log("data.status = " + data.status);
+					//console.log("data.data = " + data.data);
+					self.oApp.exec("PASTE_HTML", [ data.data ]);
+				},
+				error: function(e) {
+					console.log("error() is called...");
+				}
+			});
+			
 		});
 	},
 
