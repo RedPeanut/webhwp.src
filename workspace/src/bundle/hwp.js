@@ -1,10 +1,12 @@
 var doc = require('../hwp/doc');
 var frame = require('../hwp/frame');
+var text = require('../hwp/text');
 var hwp = require('../hwp/hwp');
 
 var bundle = {
 	doc: doc,
 	frame: frame,
+	text: text,
 	hwp: hwp,
 };
 
