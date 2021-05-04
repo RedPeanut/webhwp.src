@@ -1,4 +1,4 @@
-node_modules
-upload
-
+node_modules/
+upload/
 package-lock.json
+webhwp-*.js
