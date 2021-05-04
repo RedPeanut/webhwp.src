@@ -10,7 +10,7 @@
 	"scripts": {
 		"test": "jest",
 		"predev": "node make",
-		"dev": "nodemon --inspect server.js"
+		"dev": "nodemon server.js"
 	},
 	"dependencies": {
 		"ejs": "^3.1.6",
