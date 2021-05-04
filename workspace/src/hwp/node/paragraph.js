@@ -1,14 +1,14 @@
-var node = require('../node');
+const node = require('../node');
 
 var prototype = node.derive({
 	children: function() {
-		return this._nodes;
+		return this._line;
 	},
 	draw: function(ctx, viewPort) {
 		var top = viewPort ? viewPort.t : 0;
 		var bottom = viewPort ? (viewPort.t + viewPort.h) : Number.MAX_VALUE;
-		this._nodes.forEach(function(node) {
-			var b = node.bounds();
+		this._line.forEach(function(node) {
+			var b = _line.bounds();
 			
 		});
 	},
@@ -18,6 +18,6 @@ var prototype = node.derive({
 exports = module.exports = function(parent) {
 	var paragraph = Object.create(prototype);
 	paragraph._parent = parent;
-	paragraph._nodes = [];
+	paragraph._line = [];
 	return paragraph;
 };

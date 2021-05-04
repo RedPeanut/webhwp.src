@@ -9,6 +9,6 @@ var prototype = node.derive({
 });
 
 exports = module.exports = function() {
-	var nodes = [];
-	var bodyText = Object.create(prototype, {});
+	var text = Object.create(prototype, {});
+	
 };
