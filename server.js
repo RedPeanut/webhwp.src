@@ -11,6 +11,10 @@ app.engine("html", require("ejs").renderFile);
 app.set("view engine", "html");
 app.set("views", __dirname + "/workspace/templates");
 
+app.get("/text", (req, res) => {
+	res.render("text");
+});
+
 app.get("/", (req, res) => {
 	//res.send("/ is called...");
 	//res.render("index", { title: "제목이들어갑니다", message: "메세지가들어갑니다"});
