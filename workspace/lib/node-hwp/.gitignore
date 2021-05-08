@@ -1,0 +1,6 @@
+priv_files/
+node_modules/
+
+npm-debug.log
+format/format.js
+
