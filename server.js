@@ -3,7 +3,7 @@ var express = require("express");
 var multer = require('multer');
 var fs = require("fs");
 var path = require("path");
-var hwp = require('./workspace/src/node-hwp/lib/hwp');
+var hwp = require('@webhwp/node-hwp');
 
 var app = express();
 
