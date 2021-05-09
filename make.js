@@ -13,7 +13,7 @@ new minify.minify({
 	type: 'uglifyjs',
 	fileIn: 'workspace/static/js/webhwp-debug.js',
 	fileOut: 'workspace/static/js/webhwp-min.js',
-	callback: function(err, min){
+	callback: function(err, min) {
 		if (err) {
 			console.log(err);
 		}
