@@ -16,10 +16,16 @@ app.get("/text", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-	//res.send("/ is called...");
-	//res.render("index", { title: "제목이들어갑니다", message: "메세지가들어갑니다"});
-	//res.redirect("/load");
-	res.render("index");
+	res.redirect("/html");
+});
+
+app.get("/canvas", (req, res) => {
+	//res.send("/canvas is called...");
+	res.render("canvas"/* , { title: "제목이들어갑니다", message: "메세지가들어갑니다"} */);
+});
+
+app.get("/html", (req, res) => {
+	res.render("html");
 });
 
 fs.readdir("upload", (error) => {

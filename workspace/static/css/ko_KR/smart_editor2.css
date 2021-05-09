@@ -235,7 +235,7 @@ body,#smart_editor2,#smart_editor2 p,#smart_editor2 h1,#smart_editor2 h2,#smart_
 #smart_editor2 .se2_document .ruler {height:36px;background-color:blue;opacity:0.2;}
 
 /*  */
-#smart_editor2 .se2_document .editing_area {margin:0 auto;position:relative;}
+#smart_editor2 .se2_document .editing_area {margin:0 auto;}
 
 /*  */
 .BLINK_CURSOR {opacity:1.0;animation:blink 1.2s infinite;}
