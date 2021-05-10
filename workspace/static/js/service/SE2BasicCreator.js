@@ -35,7 +35,7 @@ window.createSEditor2 = function(elIRField, htParams, elSeAppContainer){
 		htParams = {}; 
 		htParams.fOnBeforeUnload = null;
 	}
-	htParams.type = htParams.type || "HTML";
+	htParams.type = htParams.type || "WYSIWYG";
 	htParams.elAppContainer = elAppContainer;												// 에디터 UI 최상위 element 셋팅 
 	htParams.oNavigator = jindo.$Agent().navigator();										// navigator 객체 셋팅
 	htParams.I18N_LOCALE = htParams.I18N_LOCALE || "ko_KR";
@@ -75,7 +75,7 @@ window.createSEditor2 = function(elIRField, htParams, elSeAppContainer){
 	if (htParams.type == "CANVAS")
 		oEditor.registerPlugin(new nhn.husky.SE_EditingArea_Canvas(elAppContainer));
 	else
-		oEditor.registerPlugin(new nhn.husky.SE_EditingArea_Html(elAppContainer));
+		oEditor.registerPlugin(new nhn.husky.SE_EditingArea_Wysiwyg(elAppContainer));
 	oEditor.registerPlugin(new nhn.husky.SE2M_Menubar(elAppContainer));
 	oEditor.registerPlugin(new nhn.husky.SE2M_ExecCommand(elAppContainer));
 	

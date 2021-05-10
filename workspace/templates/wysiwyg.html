@@ -19,12 +19,13 @@
 window.onload = function() {
 	var oEditors = [];
 	var oApp = createSEditor2(null, {
+		type: "WYSIWYG",
 		fOnBeforeUnload: function() {},
 		I18N_LOCALE: "ko_KR" // 언어 (ko_KR/ en_US/ ja_JP/ zh_CN/ zh_TW), default = ko_KR
 	});
 	
 	oEditors[oEditors.length] = oApp;
-	if(!oEditors.getById) oEditors.getById = {};
+	if (!oEditors.getById) oEditors.getById = {};
 
 	oApp.run({
 		fnOnAppReady: function() {
@@ -596,7 +597,7 @@ window.onload = function() {
 			<div class="editing_area" style="position:relative;overflow:auto;">
 				<textarea class="blind" name="" id="persistence"></textarea>
 				<!-- <canvas id="paperCanvas" style="position:absolute;"></canvas> -->
-				<div id="paperHtml" style="position:absolute;background:white;overflow:hidden;"></div>
+				<div id="paperHtml" style="position:absolute;background:white;overflow:hidden;" contenteditable="true"></div>
 				<div id="cursor" class=""></div>
 				<textarea name="" id="" autocorrect="off" autocapitalize="off" spellcheck="false" style="display:none;position:absolute;padding:0px;width:100%;height:1em;outline:none;font-size:4px;"></textarea>
 				<!-- <div id="" style="height:36px;width:100%;position:absolute;bottom:0;background-color:#f2f2f2;"></div> -->

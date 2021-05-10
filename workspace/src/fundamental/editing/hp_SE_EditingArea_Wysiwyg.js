@@ -1,9 +1,9 @@
 /**
  * @desc 
  */
-nhn.husky.SE_EditingArea_Html = jindo.$Class({
-
-	name: "SE_EditingArea_Html",
+ nhn.husky.SE_EditingArea_Wysiwyg = jindo.$Class({
+	mode: "WYSIWYG",
+	name: "SE_EditingArea_Wysiwyg",
 
 	/* RATIO: 3.78, //ratio=px/mm, mm to px ratio
 	documentWidth: Math.floor(210*this.RATIO), //px
@@ -42,7 +42,10 @@ nhn.husky.SE_EditingArea_Html = jindo.$Class({
 
 		this.paperHtml.style.width = this.paperWidth+/* this.paperMargin*2+ */"px";
 		this.paperHtml.style.height = this.paperHeight+/* this.paperMargin*2+ */"px";
-
+		this.paperHtml.style.paddingLeft = this.paddingLeft+"px";
+		this.paperHtml.style.paddingTop = this.paddingTop+"px";
+		this.paperHtml.style.paddingRight = this.paddingRight+"px";
+		this.paperHtml.style.paddingBottom = this.paddingBottom+"px";
 		//this.paperHtml.style.left = this.paperMargin;
 		this.paperHtml.style.top = this.paperMargin+"px";
 	},
@@ -51,12 +54,14 @@ nhn.husky.SE_EditingArea_Html = jindo.$Class({
 	},
 
 	$ON_MSG_APP_READY: function() {
+		//this.oEditingArea = this.editingArea;
 		//this.oApp.registerBrowserEvent(this.scrollView, "scroll", "EVENT_SCROLL_VIEW_SCROLL", [], null, 10);
 		this.oApp.registerBrowserEvent(window, "resize", "EVENT_WINDOW_RESIZE", [], null, 100);
 	},
 
 	$AFTER_MSG_APP_READY : function() {
 		this.oApp.exec("EVENT_WINDOW_RESIZE");
+		this.oApp.exec("REGISTER_EDITING_AREA", [this]);
 	},
 
 	$ON_EVENT_SCROLL_VIEW_SCROLL: function() {

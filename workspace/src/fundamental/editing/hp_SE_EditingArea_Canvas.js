@@ -2,7 +2,7 @@
  * @desc 
  */
 nhn.husky.SE_EditingArea_Canvas = jindo.$Class({
-
+	mode: "CANVAS",
 	name: "SE_EditingArea_Canvas",
 
 	/* RATIO: 3.78, //ratio=px/mm, mm to px ratio

@@ -11,7 +11,7 @@ require("../common/base/hp_SE2M_Menubar.js");
 //require("../common/base/hp_SE2M_Toolbar.js");
 require("../fundamental/editing/hp_SE_EditingAreaManager.js");
 require("../fundamental/editing/hp_SE_EditingArea_Canvas.js");
-require("../fundamental/editing/hp_SE_EditingArea_Html.js");
+require("../fundamental/editing/hp_SE_EditingArea_Wysiwyg.js");
 require("../fundamental/base/hp_SE2M_ExecCommand.js");
 require("../util/hp_Utils.js");
 require("../util/hp_StringConverterManager.js");

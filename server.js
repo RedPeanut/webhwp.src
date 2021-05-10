@@ -16,7 +16,7 @@ app.get("/text", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-	res.redirect("/html");
+	res.redirect("/wysiwyg");
 });
 
 app.get("/canvas", (req, res) => {
@@ -24,8 +24,8 @@ app.get("/canvas", (req, res) => {
 	res.render("canvas"/* , { title: "제목이들어갑니다", message: "메세지가들어갑니다"} */);
 });
 
-app.get("/html", (req, res) => {
-	res.render("html");
+app.get("/wysiwyg", (req, res) => {
+	res.render("wysiwyg");
 });
 
 fs.readdir("upload", (error) => {
