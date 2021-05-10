@@ -11,7 +11,8 @@
 		"test": "jest",
 		"predev": "node make",
 		"dev": "nodemon server.js",
-		"install:node-hwp": "cd workspace/lib/node-hwp && npm run install"
+		"install:node-hwp": "cd workspace/lib/node-hwp && npm run install",
+		"install:markup": "cd workspace/lib/markup && npm run install"
 	},
 	"dependencies": {
 		"ejs": "^3.1.6",

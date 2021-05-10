@@ -2,6 +2,7 @@
 /* NHN Web Standardization Team (http://html.nhndesign.com/) HHJ 090226 */
 /* COMMON */
 * {box-sizing:border-box;}
+*:focus {outline:none;}
 .hidden {width:0;height:0;}
 
 html,body,#smart_editor2 {height:100%;}
