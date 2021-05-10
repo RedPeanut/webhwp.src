@@ -12,7 +12,8 @@
 		"predev": "node make",
 		"dev": "nodemon server.js",
 		"install:node-hwp": "cd workspace/lib/node-hwp && npm run install",
-		"install:markup": "cd workspace/lib/markup && npm run install"
+		"install:markup": "cd workspace/lib/markup && npm run install",
+		"install:hwp.js": "cd workspace/lib/hwp.js && npm run install"
 	},
 	"dependencies": {
 		"ejs": "^3.1.6",
@@ -22,6 +23,7 @@
 	},
 	"devDependencies": {
 		"@webhwp/node-hwp": "file:workspace/lib/node-hwp",
+		"@webhwp/hwp.js": "file:workspace/lib/hwp.js",
 		"jest": "^26.6.3",
 		"node-minify": "^0.8.1",
 		"nodemon": "^2.0.7",
