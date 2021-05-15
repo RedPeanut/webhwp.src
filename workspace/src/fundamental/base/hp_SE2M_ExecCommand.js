@@ -15,7 +15,19 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software  
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA  
 */
-//{
+
+import { 
+	HWPDocument,
+	DocInfo,
+	HWPHeader,
+	HWPVersion,
+	Section,
+	DocInfoParser,
+	SectionParser,
+
+	parse, Viewer 
+} from "@webhwp/hwp.js";
+
 /**
  * @fileOverview This file contains Husky plugin that takes care of the basic editor commands
  * @name hp_SE_ExecCommand.js
@@ -24,35 +36,22 @@ nhn.husky.SE2M_ExecCommand = jindo.$Class({
 	name: "SE2M_ExecCommand",
 
 	$init: function(elAppContainer) {
-
 		var self = this;
-		
 		this.$file = $("input[type=file]");
-		
 		this.$file.on("change", function() {
 			console.log("onchange() is called...");
+			var blob = this.files[0];
+			var paper = self.oApp.getWysiwygPaperHtml();
+			//console.log("paper = " + paper);
+			blob.arrayBuffer().then(arrayBuffer => {
+				var array = new Uint8Array(arrayBuffer);
+				//new Viewer(paper, array, {type: "array"});
+				var document = parse(array, {type: "array"});
+				document.sections.forEach((section, index) => {
 
-			var data = new FormData(document.loadForm);
-
-			$.ajax({
-				type: "POST",
-				enctype: 'multipart/form-data',
-				url: "/load",
-				data: data,
-				processData: false,
-				contentType: false,
-				cache: false,
-				success: function(data) {
-					console.log("success() is called...");
-					console.log("data.status = " + data.status);
-					//console.log("data.data = " + data.data);
-					self.oApp.exec("PASTE_HTML", [ data.data ]);
-				},
-				error: function(e) {
-					console.log("error() is called...");
-				}
+				});
+				
 			});
-			
 		});
 	},
 
@@ -71,7 +70,7 @@ nhn.husky.SE2M_ExecCommand = jindo.$Class({
 	$ON_EXECCOMMAND: function(sCommand, bUserInterface, vValue) {
 		//console.log("$ON_EXECCOMMAND is called...");
 		//console.log("sCommand = " + sCommand);
-		switch(sCommand) {
+		switch (sCommand) {
 			case "FILE_LOAD":
 				this.$file.click();
 				break;

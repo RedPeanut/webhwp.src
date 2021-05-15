@@ -116,7 +116,7 @@ import {
 			editingAreaHeight = this.editingArea.clientHeight;
 		
 		var paperLeftPos = (editingAreaWidth - this.paperWidth) / 2;
-		if (paperLeftPos < 0) paperLeftPos = this.paperMargin;
+		if (paperLeftPos < this.paperMargin) paperLeftPos = this.paperMargin;
 		this.paperHtml.style.left = paperLeftPos+"px";
 
 		var scrollViewWidth = Math.max(this.paperWidth+this.paperMargin*2, editingAreaWidth);

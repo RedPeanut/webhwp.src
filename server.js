@@ -4,7 +4,7 @@ var multer = require('multer');
 var fs = require("fs");
 var path = require("path");
 var hwp = require('@webhwp/node-hwp');
-var HWPViewer = require('@webhwp/hwp.js/src/viewer');
+//var HWPViewer = require('@webhwp/hwp.js/src/viewer');
 
 var app = express();
 
