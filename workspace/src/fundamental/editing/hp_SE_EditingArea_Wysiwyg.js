@@ -2,7 +2,7 @@
  * @desc 
  */
  nhn.husky.SE_EditingArea_Wysiwyg = jindo.$Class({
-	mode: "WYSIWYG",
+	type: "WYSIWYG",
 	name: "SE_EditingArea_Wysiwyg",
 
 	/* RATIO: 3.78, //ratio=px/mm, mm to px ratio
@@ -25,7 +25,7 @@
 		this.scrollView = document.querySelector("#scrollView");
 		this.scrollViewHorizontal = document.querySelector("#scrollViewHorizontal");
 		this.scrollViewVertical = document.querySelector("#scrollViewVertical");
-		this.paperHtml = editingArea.querySelector("#paperHtml");;
+		this.paperHtml = editingArea.querySelector("#paperHtml");
 
 		//주요 상수값들 및 변수 선언
 		this.RATIO = 3.78; //ratio=px/mm; mm to px ratio

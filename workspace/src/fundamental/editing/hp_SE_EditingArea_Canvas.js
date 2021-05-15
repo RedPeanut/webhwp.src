@@ -2,7 +2,7 @@
  * @desc 
  */
 nhn.husky.SE_EditingArea_Canvas = jindo.$Class({
-	mode: "CANVAS",
+	type: "CANVAS",
 	name: "SE_EditingArea_Canvas",
 
 	/* RATIO: 3.78, //ratio=px/mm, mm to px ratio
@@ -47,6 +47,7 @@ nhn.husky.SE_EditingArea_Canvas = jindo.$Class({
 	},
 
 	$BEFORE_MSG_APP_READY: function() {
+		this.oApp.exec("REGISTER_EDITING_AREA", [this]);
 	},
 
 	$ON_MSG_APP_READY: function() {
