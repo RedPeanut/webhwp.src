@@ -77,7 +77,7 @@ window.createSEditor2 = function(elIRField, htParams, elSeAppContainer){
 	else
 		oEditor.registerPlugin(new nhn.husky.SE_EditingArea_Wysiwyg(elAppContainer));
 	oEditor.registerPlugin(new nhn.husky.SE2M_Menubar(elAppContainer));
-	oEditor.registerPlugin(new nhn.husky.SE2M_ExecCommand(elAppContainer));
+	//oEditor.registerPlugin(new nhn.husky.SE2M_ExecCommand(elAppContainer));
 	
 	//oEditor.registerPlugin(new nhn.husky.SE_EditingArea_Doc(elAppContainer));
 	//oEditor.registerPlugin(new nhn.husky.SE_EditingArea_Frame(elAppContainer));

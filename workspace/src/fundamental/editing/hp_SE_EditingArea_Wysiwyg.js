@@ -1,3 +1,15 @@
+import { 
+	HWPDocument,
+	DocInfo,
+	HWPHeader,
+	HWPVersion,
+	Section,
+	DocInfoParser,
+	SectionParser,
+
+	parse, Viewer 
+} from "@webhwp/hwp.js";
+
 /**
  * @desc 
  */
@@ -11,7 +23,7 @@
 	documentMargin: 20, //px */
 
 	$init: function(appContainer) {
-		console.log("$init() is called...");
+		//console.log("$init() is called...");
 		this.appContainer = appContainer;
 		this.menuBar = appContainer.querySelector("#menuBar");
 		this.toolBar = appContainer.querySelector("#toolBar");
@@ -48,9 +60,32 @@
 		this.paperHtml.style.paddingBottom = this.paddingBottom+"px";
 		//this.paperHtml.style.left = this.paperMargin;
 		this.paperHtml.style.top = this.paperMargin+"px";
+
+		var self = this;
+		this.$file = $("input[type=file]");
+		this.$file.on("change", function() {
+			console.log("onchange() is called...");
+			var blob = this.files[0];
+			var paper = self.getPaperHtml();
+			//console.log("paper = " + paper);
+			blob.arrayBuffer().then(arrayBuffer => {
+				var array = new Uint8Array(arrayBuffer);
+				//new Viewer(paper, array, {type: "array"});
+				var document = parse(array, {type: "array"});
+				//console.log("document.sections.length = " + document.sections.length);
+				document.sections.forEach((section, index) => {
+					
+				});
+				
+			});
+		});
 	},
 
 	$BEFORE_MSG_APP_READY: function() {
+		this.oApp.exec("REGISTER_EDITING_AREA", [this]);
+		this.oApp.exec("ADD_APP_PROPERTY", ["getWysiwygPaperHtml", this.getPaperHtml.bind(this)]);
+		this.oApp.exec("REGISTER_MENU_EVENT", ["FILE_LOAD", "click", "EXECCOMMAND", ["FILE_LOAD", false, false]]);
+		this.oApp.exec("REGISTER_MENU_EVENT", ["FILE_DOWNLOAD", "click", "EXECCOMMAND", ["FILE_DOWNLOAD", false, false]]);
 	},
 
 	$ON_MSG_APP_READY: function() {
@@ -108,5 +143,22 @@
 	$ON_PASTE_HTML: function(sHTML, oPSelection, htOption) {
 		//this.oApp.exec("EVENT_WINDOW_RESIZE");
 	},
-	
+
+	getPaperHtml: function() {
+		//console.log("getPaperHtml() is called...");
+		return this.paperHtml;
+	},
+
+	$ON_EXECCOMMAND: function(sCommand, bUserInterface, vValue) {
+		//console.log("$ON_EXECCOMMAND is called...");
+		//console.log("sCommand = " + sCommand);
+		switch (sCommand) {
+			case "FILE_LOAD":
+				this.$file.click();
+				break;
+			case "FILE_DOWNLOAD":
+
+				break;
+		}
+	},
 });
