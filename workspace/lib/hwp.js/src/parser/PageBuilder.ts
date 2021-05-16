@@ -25,26 +25,17 @@ import { CommonCtrlID } from '../constants/ctrlID'
 import splitTable from './splitTable'
 
 class PageBuilder {
+
   private section: Section
-
   private currentSection: Section
-
   private currentParagraph: Paragraph = new Paragraph()
-
   private readIndex: number = 0
-
   private contentHeight: number = 0
-
   private currentHeight: number = 0
-
   private controlIndex: number = 0
-
   private startCharIndex: number = 0
-
   private endCharIndex: number = 0
-
   private shapeBufferIndex: number = 0
-
   private latestY: number = 0
 
   constructor(section: Section) {
@@ -62,16 +53,16 @@ class PageBuilder {
   result: Section[] = []
 
   createSection() {
-    const session = new Section()
-    session.width = this.section.width
-    session.height = this.section.height
-    session.paddingTop = this.section.paddingTop
-    session.paddingRight = this.section.paddingRight
-    session.paddingBottom = this.section.paddingBottom
-    session.paddingLeft = this.section.paddingLeft
-    session.headerPadding = this.section.headerPadding
-    session.footerPadding = this.section.footerPadding
-    return session
+    const section = new Section()
+    section.width = this.section.width
+    section.height = this.section.height
+    section.paddingTop = this.section.paddingTop
+    section.paddingRight = this.section.paddingRight
+    section.paddingBottom = this.section.paddingBottom
+    section.paddingLeft = this.section.paddingLeft
+    section.headerPadding = this.section.headerPadding
+    section.footerPadding = this.section.footerPadding
+    return section
   }
 
   getLine(lineSegment: LineSegment, index: number, paragraph: Paragraph) {

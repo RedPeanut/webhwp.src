@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "gatsby build --prefix-paths",
-    "develop": "gatsby develop",
+    "develop": "gatsby develop --port 8001",
     "start": "npm run develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",

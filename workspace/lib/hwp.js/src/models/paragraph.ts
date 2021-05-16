@@ -20,35 +20,27 @@ import LineSegment from './lineSegment'
 import { Control } from './controls'
 
 class Paragraph {
+
   content: HWPChar[] = []
-
   shapeBuffer: ShapePointer[] = []
-
   controls: Control[] = []
-
   lineSegments: LineSegment[] = []
-
   shapeIndex: number = 0
-
   aligns: number = 0
-
   textSize: number = 0
 
   getShapeEndPos(index: number): number {
     if (index === this.shapeBuffer.length - 1) {
       return this.content.length - 1
     }
-
     return this.shapeBuffer[index + 1].pos - 1
   }
 
   getNextSize(index: number): number {
     const next = this.lineSegments[index + 1]
-
     if (!next) {
       return this.textSize
     }
-
     return next.start
   }
 }

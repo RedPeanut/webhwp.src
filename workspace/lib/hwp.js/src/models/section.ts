@@ -18,25 +18,15 @@ import Paragraph from './paragraph'
 
 class Section {
   width: number = 0
-
   height: number = 0
-
   paddingLeft: number = 0
-
   paddingRight: number = 0
-
   paddingTop: number = 0
-
   paddingBottom: number = 0
-
   headerPadding: number = 0
-
   footerPadding: number = 0
-
   content: Paragraph[] = []
-
   orientation: number = 0
-
   bookBindingMethod: number = 0
 }
 
