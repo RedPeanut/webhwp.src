@@ -14,10 +14,34 @@
  * limitations under the License.
  */
 
+import HWPDocument from './models/document'
+import DocInfo from './models/docInfo'
+import HWPHeader from './models/header'
+import HWPVersion from './models/version'
+import Section from './models/section'
+import CharType from './models/char'
+
+import DocInfoParser from './parser/DocInfoParser'
+import SectionParser from './parser/SectionParser'
 import parse from './parser'
+import parsePage from './parser/parsePage';
 import Viewer from './viewer'
 
+import { isTable, isShape, isPicture } from './utils/controlUtil'
+
 export {
+  HWPDocument,
+  DocInfo,
+  HWPHeader,
+  HWPVersion,
+  Section,
+  CharType,
+
+  DocInfoParser,
+  SectionParser,
   parse,
+  parsePage,
   Viewer,
+
+  isTable, isShape, isPicture
 }

@@ -86,8 +86,8 @@ nhn.husky.SE_EditingAreaManager = jindo.$Class({
 
 	$ON_REGISTER_EDITING_AREA: function(oEditingAreaPlugin) {
 		this.oEditingMode[oEditingAreaPlugin.mode] = oEditingAreaPlugin;
-		if (oEditingAreaPlugin.type == 'WYSIWYG')
-			this.attachDocumentEvents(oEditingAreaPlugin.paperHtml);
+		//if (oEditingAreaPlugin.type == 'WYSIWYG')
+			//this.attachDocumentEvents(oEditingAreaPlugin.paperHtml);
 		//this._setEditingAreaDimension(oEditingAreaPlugin);
 	},
 
