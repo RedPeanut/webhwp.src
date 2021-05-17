@@ -15,8 +15,8 @@
  */
 
 class ByteReader {
-  private view: DataView
 
+  private view: DataView
   private offsetByte: number = 0
 
   constructor(buffer: ArrayBuffer) {

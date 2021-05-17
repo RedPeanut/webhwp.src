@@ -217,5 +217,4 @@ build/
 src/parser/__tests__/data/
 
 extension/content/hwp.js
-
 package-lock.json

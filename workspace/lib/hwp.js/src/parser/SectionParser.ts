@@ -36,10 +36,9 @@ import { getBitValue, getFlag } from '../utils/bitUtils'
 import ColumnControl from '../models/controls/column'
 
 class SectionParser {
+
   private record: HWPRecord
-
   private result: Section
-
   private content: Paragraph[] = []
 
   constructor(data: Uint8Array) {
@@ -237,9 +236,7 @@ class SectionParser {
 
   visitControlHeader(record: HWPRecord, paragraph: Paragraph) {
     const reader = new ByteReader(record.payload)
-
     const control = this.getControl(reader)
-
     const childrenReader = new RecordReader(record.children)
 
     while (childrenReader.hasNext()) {
@@ -426,11 +423,8 @@ class SectionParser {
 
   visitParagraphHeader(record: HWPRecord, content: Paragraph[], control?: Control) {
     const result = new Paragraph()
-
     const reader = new ByteReader(record.payload)
-
     reader.skipByte(8)
-
     result.shapeIndex = reader.readUInt16()
 
     const childrenRecordReader = new RecordReader(record.children)

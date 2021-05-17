@@ -19,11 +19,8 @@
  */
 class HWPVersion {
   major: number
-
   minor: number
-
   build: number
-
   revision: number
 
   constructor(major: number, minor: number, build: number, revision: number) {
