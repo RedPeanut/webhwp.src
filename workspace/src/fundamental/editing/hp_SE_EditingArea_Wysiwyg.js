@@ -98,7 +98,7 @@ const TEXT_ALIGN = {
 				});
 				
 				self.oApp.exec("EVENT_WINDOW_RESIZE");
-
+				self.oApp.exec("POSITION_TOP");
 			});
 		});
 
@@ -162,8 +162,8 @@ const TEXT_ALIGN = {
 	},
 
 	$AFTER_MSG_APP_READY : function() {
-		this.oApp.exec("EVENT_WINDOW_RESIZE");
 		this.oApp.exec("REGISTER_EDITING_AREA", [this]);
+		this.oApp.exec("EVENT_WINDOW_RESIZE");
 	},
 
 	$ON_EVENT_SCROLL_VIEW_SCROLL: function() {
@@ -218,7 +218,9 @@ const TEXT_ALIGN = {
 			});
 		}
 	},
-
+	$ON_POSITION_TOP: function() {
+		this.editingArea.scrollTop = 0;
+	},
 	$ON_PASTE_HTML: function(sHTML, oPSelection, htOption) {
 		//this.oApp.exec("EVENT_WINDOW_RESIZE");
 	},
@@ -260,6 +262,7 @@ const TEXT_ALIGN = {
 
 		page.classList.add("hwpjs-page");
 		page.setAttribute("data-page-number", index.toString());
+		page.setAttribute("contenteditable", "true");
 
 		/* const observer = document.createElement("div");
 		observer.style.height = "2px";
@@ -282,7 +285,7 @@ const TEXT_ALIGN = {
 		if (borderFillID === undefined)
 			return;
 	
-		const borderFill = this.hwpDocument.info.borderFills[borderFillID];
+		const borderFill = doc.info.borderFills[borderFillID];
 	
 		target.style.borderTopColor = this.getRGBStyle(borderFill.style.top.color);
 		target.style.borderRightColor = this.getRGBStyle(borderFill.style.right.color);
@@ -321,7 +324,7 @@ const TEXT_ALIGN = {
 		this.drawBorderFill(doc, column, borderFillID);
 	
 		paragraphList.items.forEach((paragraph) => {
-			this.drawParagraph(column, paragraph);
+			this.drawParagraph(doc, column, paragraph);
 		});
 	
 		container.appendChild(column);
@@ -396,18 +399,22 @@ const TEXT_ALIGN = {
 		}
 	},
 	drawText: function(doc, container, paragraph, shapePointer, endPos) {
-		const range = paragraph.content.slice(shapePointer.pos, endPos + 1);
+		const range = paragraph.content.slice(shapePointer.pos, endPos+1);
 	
 		const texts = [];
 		let ctrlIndex = 0;
-	
+		
+		//console.log("range.length = " + range.length);
 		range.forEach((hwpChar) => {
 			if (typeof hwpChar.value === 'string') {
 				texts.push(hwpChar.value);
 				return;
 			}
-	
+			//console.log("hwpChar.type = " + hwpChar.type);
+			//console.log(hwpChar.type === CharType.Extened);
+			//console.log(hwpChar.type == CharType.Extened);
 			if (hwpChar.type === CharType.Extened) {
+				//console.log("hwpChar.type === CharType.Extened is matched...");
 				const control = paragraph.controls[ctrlIndex];
 				ctrlIndex += 1;
 				this.drawControl(doc, container, control);
@@ -442,9 +449,12 @@ const TEXT_ALIGN = {
 		container.appendChild(span);
 	},
 	drawParagraph: function(doc, container, paragraph) {
+
+		if (paragraph == null) return;
+
 		var paragraphContainer = document.createElement("div");
 		paragraphContainer.style.margin = "0";
-	
+		//console.log("paragraph.shapeIndex = " + paragraph.shapeIndex);
 		var shape = doc.info.paragraphShapes[paragraph.shapeIndex];
 		paragraphContainer.style.textAlign = TEXT_ALIGN[shape.align];
 	

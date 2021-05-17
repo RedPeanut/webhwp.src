@@ -14,9 +14,9 @@
 		"postdev": "",
 		"serve": "webpack-dev-server --hot",
 		"build": "",
-		"install:node-hwp": "cd workspace/lib/node-hwp && npm run install",
-		"install:markup": "cd workspace/lib/markup && npm run install",
-		"install:hwp.js": "cd workspace/lib/hwp.js && npm run build"
+		"build:node-hwp": "cd workspace/lib/node-hwp && npm run build",
+		"build:markup": "cd workspace/lib/markup && npm run build",
+		"build:hwp.js": "cd workspace/lib/hwp.js && npm run build"
 	},
 	"dependencies": {
 		"ejs": "^3.1.6",

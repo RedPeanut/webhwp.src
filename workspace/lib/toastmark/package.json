@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "webpack-dev-server",
     "build": "webpack --mode=production",
-    "test": "jest --watch"
+    "test": "jest"
   },
   "files": [
     "dist",
