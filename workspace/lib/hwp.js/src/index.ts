@@ -19,7 +19,7 @@ import DocInfo from './models/docInfo'
 import HWPHeader from './models/header'
 import HWPVersion from './models/version'
 import Section from './models/section'
-import CharType from './models/char'
+import { CharType } from './models/char'
 
 import DocInfoParser from './parser/DocInfoParser'
 import SectionParser from './parser/SectionParser'

@@ -1,6 +1,5 @@
 module.exports = {
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    'website'
-  ],
+  testMatch: [
+    '<rootDir>/src/parser/**/*.test.ts',
+  ]
 }

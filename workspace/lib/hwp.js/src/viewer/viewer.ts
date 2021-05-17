@@ -291,13 +291,15 @@ class HWPViewer {
     const texts: string[] = []
     let ctrlIndex = 0
 
+    //console.log('range.length = ' + range.length)
     range.forEach((hwpChar) => {
       if (typeof hwpChar.value === 'string') {
         texts.push(hwpChar.value)
         return
       }
-
+      //console.log('hwpChar.type = ' + hwpChar.type);
       if (hwpChar.type === CharType.Extened) {
+        //console.log('hwpChar.type === CharType.Extened is matched...')
         const control = paragraph.controls[ctrlIndex]
         ctrlIndex += 1
         this.drawControl(container, control)

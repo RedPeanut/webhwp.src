@@ -177,7 +177,8 @@ class SectionParser {
       reader.readInt16(),
     ]
     control.uid = reader.readUInt32()
-    control.split = reader.readInt32()
+    if (reader.getView().byteLength > reader.getOffsetByte())
+      control.split = reader.readInt32()
   }
 
   visitTableControl(reader: ByteReader) {
@@ -367,8 +368,11 @@ class SectionParser {
     }
   }
 
-  visit(reader: RecordReader, paragraph: Paragraph, control?: Control) {
+  visit(reader: RecordReader, paragraph: Paragraph, control?: Control, lvl1?: number, lvl2?: number) {
     const record = reader.read()
+
+    if (lvl1 == 5 && lvl2 == 3)
+      console.log('for break...')
 
     switch (record.tagID) {
       case SectionTagID.HWPTAG_LIST_HEADER: {
@@ -421,16 +425,20 @@ class SectionParser {
     }
   }
 
-  visitParagraphHeader(record: HWPRecord, content: Paragraph[], control?: Control) {
+  visitParagraphHeader(record: HWPRecord, content: Paragraph[], control?: Control, lvl1?: number) {
+
     const result = new Paragraph()
     const reader = new ByteReader(record.payload)
     reader.skipByte(8)
     result.shapeIndex = reader.readUInt16()
 
     const childrenRecordReader = new RecordReader(record.children)
-
+    //console.log('record.children.length = ' + record.children.length)
+    //let idx = 0;
     while (childrenRecordReader.hasNext()) {
-      this.visit(childrenRecordReader, result, control)
+      //console.log('[Paragraph] idx = ' + idx)
+      this.visit(childrenRecordReader, result, control/* , lvl1, idx */)
+      //idx++
     }
 
     content.push(result)
@@ -438,9 +446,12 @@ class SectionParser {
 
   traverse(record: HWPRecord) {
     const reader = new RecordReader(record.children)
-
+    console.log('record.children.length = ' + record.children.length)
+    //let idx = 0;
     while (reader.hasNext()) {
-      this.visitParagraphHeader(reader.read(), this.content)
+      //console.log('[ParagraphHeader] idx = ' + idx)
+      this.visitParagraphHeader(reader.read(), this.content/* , undefined, idx */)
+      //idx++
     }
   }
 

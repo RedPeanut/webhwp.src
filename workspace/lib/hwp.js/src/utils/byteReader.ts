@@ -101,6 +101,14 @@ class ByteReader {
   isEOF() {
     return this.view.byteLength <= this.offsetByte
   }
+
+  getView() {
+    return this.view
+  }
+
+  getOffsetByte() {
+    return this.offsetByte
+  }
 }
 
 export default ByteReader
