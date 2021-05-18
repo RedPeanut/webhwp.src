@@ -241,7 +241,15 @@ const TEXT_ALIGN = {
 				break;
 		}
 	},
-
+	createPaddingMark: function() {
+		const mark = document.createElement("div");
+		mark.style.position = "absolute";
+		mark.style.borderStyle = "solid";
+		mark.style.borderColor = "#c5c5c5";
+		mark.style.width = "20px";
+		mark.style.height = "20px";
+		return mark;
+	},
 	createPage: function(section, index) {
 		const page = document.createElement("div");
 		page.style.boxShadow = "0 1px 3px 1px rgba(60,64,67,.15)";
@@ -263,6 +271,28 @@ const TEXT_ALIGN = {
 		page.classList.add("hwpjs-page");
 		page.setAttribute("data-page-number", index.toString());
 		page.setAttribute("contenteditable", "true");
+
+		const lt = this.createPaddingMark();
+		lt.style.left = `calc(${page.style.paddingLeft} - 20px)`;
+		lt.style.top = `calc(${page.style.paddingTop} - 20px)`;
+		lt.style.borderWidth = "0 1px 1px 0";
+		const rt = this.createPaddingMark();
+		rt.style.right = `calc(${page.style.paddingRight} - 20px)`;
+		rt.style.top = `calc(${page.style.paddingTop} - 20px)`;
+		rt.style.borderWidth = "0 0 1px 1px";
+		const rb = this.createPaddingMark();
+		rb.style.right = `calc(${page.style.paddingRight} - 20px)`;
+		rb.style.bottom = `calc(${page.style.paddingBottom} - 20px)`;
+		rb.style.borderWidth = "1px 0 0 1px";
+		const lb = this.createPaddingMark();
+		lb.style.left = `calc(${page.style.paddingLeft} - 20px)`;
+		lb.style.bottom = `calc(${page.style.paddingBottom} - 20px)`;
+		lb.style.borderWidth = "1px 1px 0 0";
+
+		page.appendChild(lt);
+		page.appendChild(rt);
+		page.appendChild(rb);
+		page.appendChild(lb);
 
 		/* const observer = document.createElement("div");
 		observer.style.height = "2px";
