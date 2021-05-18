@@ -53,7 +53,7 @@ module.exports = (env, { mode = 'development' }) => {
     devServer: {
       inline: true,
       host: '0.0.0.0',
-      port: 8000,
+      port: 8002,
       disableHostCheck: true
     }
   });

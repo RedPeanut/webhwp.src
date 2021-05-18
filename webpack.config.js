@@ -1,21 +1,21 @@
-const path = require('path');
-const child_process = require('child_process');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const path = require("path");
+const child_process = require("child_process");
+const webpack = require("webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = (env = {}) => {
-	const pkg = require('./package.json');
+	const pkg = require("./package.json");
 
 	return {
-		mode: env.production ? 'production' : 'development',
+		mode: env.production ? "production" : "development",
 		entry: {
-			'webhwp': './workspace/src/bundle/index.js'
+			"webhwp": "./workspace/src/bundle/index.js"
 		},
 		output: {
-			filename: 'js/[name].js',
-			path: path.resolve(__dirname, 'dist')
+			filename: "js/[name].js",
+			path: path.resolve(__dirname, "dist")
 		},
 		module: {
 			rules: [
@@ -29,7 +29,7 @@ module.exports = (env = {}) => {
 		plugins: [
 			new CleanWebpackPlugin(),
 			new CopyWebpackPlugin([
-				'workspace/static'
+				"workspace/static"
 			]),
 		],
 		optimization: {
@@ -37,11 +37,11 @@ module.exports = (env = {}) => {
 		},
 		devServer: {
 			port: 8000,
-			contentBase: path.join(__dirname, 'dist'),
-			openPage: 'index.html',
+			contentBase: path.join(__dirname, "dist"),
+			openPage: "index.html",
 		},
 		node: {
-			fs: 'empty',
+			fs: "empty",
 		}
 	};
 };
