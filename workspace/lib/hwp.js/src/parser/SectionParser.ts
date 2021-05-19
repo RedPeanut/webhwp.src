@@ -371,8 +371,8 @@ class SectionParser {
   visit(reader: RecordReader, paragraph: Paragraph, control?: Control, lvl1?: number, lvl2?: number) {
     const record = reader.read()
 
-    if (lvl1 == 5 && lvl2 == 3)
-      console.log('for break...')
+    //if (lvl1 == 5 && lvl2 == 3)
+      //console.log('for break...')
 
     switch (record.tagID) {
       case SectionTagID.HWPTAG_LIST_HEADER: {
@@ -446,7 +446,7 @@ class SectionParser {
 
   traverse(record: HWPRecord) {
     const reader = new RecordReader(record.children)
-    console.log('record.children.length = ' + record.children.length)
+    //console.log('record.children.length = ' + record.children.length)
     //let idx = 0;
     while (reader.hasNext()) {
       //console.log('[ParagraphHeader] idx = ' + idx)

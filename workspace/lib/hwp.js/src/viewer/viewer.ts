@@ -76,11 +76,8 @@ class HWPViewer {
   )
 
   private container: HTMLElement
-
   private viewer: HTMLElement = window.document.createElement('div')
-
   private pages: HTMLElement[] = []
-
   private header: Header | null = null
 
   constructor(container: HTMLElement, data: Uint8Array, option: CFB$ParsingOptions = { type: 'binary' }) {

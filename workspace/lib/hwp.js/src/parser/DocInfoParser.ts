@@ -32,10 +32,9 @@ import Panose from '../models/panose'
 import parseRecordTree from './parseRecord'
 
 class DocInfoParser {
+
   private record: HWPRecord
-
   private result = new DocInfo()
-
   private container: CFB$Container
 
   constructor(data: Uint8Array, container: CFB$Container) {
