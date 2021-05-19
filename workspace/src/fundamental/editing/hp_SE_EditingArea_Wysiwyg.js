@@ -16,6 +16,8 @@ import {
 	isTable, isShape, isPicture
 } from "@webhwp/hwp.js";
 
+import Readable from "stream"
+
 const BORDER_WIDTH = [
 	"0.1mm",
 	"0.12mm",
@@ -79,8 +81,8 @@ const TEXT_ALIGN = {
 		this.$file = $("input[type=file]");
 		this.$file.on("change", function() {
 			console.log("onchange() is called...");
-			var blob = this.files[0];
-			blob.arrayBuffer().then(arrayBuffer => {
+			var blob = this.files.item(0);
+			/* blob.arrayBuffer().then(arrayBuffer => {
 
 				//remove all pages
 				$(".hwpjs-page").remove(); 
@@ -99,16 +101,62 @@ const TEXT_ALIGN = {
 				
 				self.oApp.exec("EVENT_WINDOW_RESIZE");
 				self.oApp.exec("POSITION_TOP");
-			});
+			}); */
+
+			var reader = new FileReader();
+			reader.onload = function(event) {
+				
+				//remove all pages
+				$(".hwpjs-page").remove(); 
+				self.pages = [];
+
+				//load file
+				var array = new Uint8Array(event.target.result);
+				//new Viewer(self.paperHtml, array, {type: "array"});
+				self.document = parsePage(parse(array, {type: "array"}));
+				//console.log("document.sections.length = " + document.sections.length);
+
+				//draw pages
+				self.document.sections.forEach((section, index) => {
+					self.drawSection(self.document, self.editingArea, section, index);
+				});
+				
+				self.oApp.exec("EVENT_WINDOW_RESIZE");
+				self.oApp.exec("POSITION_TOP");
+			};
+			reader.readAsArrayBuffer(blob);
+
 		});
 
 		this.pageMargin = 20; //px
-
 		this.pages = [];
+		this.document;
+
+		/* var reader = new FileReader();
+		reader.onload = function(event) {
+			console.log("onload() is called...");
+		};
+		reader.readAsDataURL("files/blank.hwp"); */
 
 		/* Blank 페이지 */
 
-		//디폴트:A4,단위:7200/inch 
+		fetch("files/blank.hwp")
+		.then(res => res.arrayBuffer())
+		.then(res => {
+			console.log("then() is called...");
+			var array = new Uint8Array(res);
+			self.document = parsePage(parse(array, {type: "array"}));
+			self.document.sections.forEach((section, index) => {
+				self.drawSection(self.document, self.editingArea, section, index);
+			});
+			self.oApp.exec("EVENT_WINDOW_RESIZE");
+			self.oApp.exec("POSITION_TOP");
+		})
+		.catch(() => {
+			console.log("catch() is called...");
+		});
+
+		/* //디폴트:A4,단위:7200/inch 
 		var section = new Section();
 		section.width = 59528;
 		section.height = 84188;
@@ -120,7 +168,7 @@ const TEXT_ALIGN = {
 		section.paddingLeft = 8503;
 		var page = this.createPage(section, 0);
 		this.pages.push(page);
-		this.editingArea.appendChild(page);
+		this.editingArea.appendChild(page); */
 
 		/* this.paperHtml = editingArea.querySelector("#paperHtml");
 
@@ -150,7 +198,7 @@ const TEXT_ALIGN = {
 
 	$BEFORE_MSG_APP_READY: function() {
 		this.oApp.exec("REGISTER_EDITING_AREA", [this]);
-		this.oApp.exec("ADD_APP_PROPERTY", ["getWysiwygPaperHtml", this.getPaperHtml.bind(this)]);
+		//this.oApp.exec("ADD_APP_PROPERTY", ["getWysiwygPaperHtml", this.getPaperHtml.bind(this)]);
 		this.oApp.exec("REGISTER_MENU_EVENT", ["FILE_LOAD", "click", "EXECCOMMAND", ["FILE_LOAD", false, false]]);
 		this.oApp.exec("REGISTER_MENU_EVENT", ["FILE_DOWNLOAD", "click", "EXECCOMMAND", ["FILE_DOWNLOAD", false, false]]);
 	},
@@ -162,8 +210,9 @@ const TEXT_ALIGN = {
 	},
 
 	$AFTER_MSG_APP_READY : function() {
+		console.log("$AFTER_MSG_APP_READY() is called...");
 		this.oApp.exec("REGISTER_EDITING_AREA", [this]);
-		this.oApp.exec("EVENT_WINDOW_RESIZE");
+		//this.oApp.exec("EVENT_WINDOW_RESIZE");
 	},
 
 	$ON_EVENT_SCROLL_VIEW_SCROLL: function() {
@@ -225,11 +274,6 @@ const TEXT_ALIGN = {
 		//this.oApp.exec("EVENT_WINDOW_RESIZE");
 	},
 
-	getPaperHtml: function() {
-		//console.log("getPaperHtml() is called...");
-		return this.paperHtml;
-	},
-
 	$ON_EXECCOMMAND: function(sCommand, bUserInterface, vValue) {
 		//console.log("$ON_EXECCOMMAND is called...");
 		//console.log("sCommand = " + sCommand);
@@ -238,6 +282,9 @@ const TEXT_ALIGN = {
 				this.$file.click();
 				break;
 			case "FILE_DOWNLOAD":
+				var stream = new Readable();
+				//stream.push(Array)
+				stream._read = function() {}
 				break;
 		}
 	},
@@ -248,6 +295,7 @@ const TEXT_ALIGN = {
 		mark.style.borderColor = "#c5c5c5";
 		mark.style.width = "20px";
 		mark.style.height = "20px";
+		//mark.setAttribute("contenteditable", "false");
 		return mark;
 	},
 	createPage: function(section, index) {
