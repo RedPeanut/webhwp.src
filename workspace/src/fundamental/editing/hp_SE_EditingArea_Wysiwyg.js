@@ -17,6 +17,7 @@ import {
 } from "@webhwp/hwp.js";
 
 import Readable from "stream"
+import { saveAs } from "file-saver";
 
 const BORDER_WIDTH = [
 	"0.1mm",
@@ -282,9 +283,8 @@ const TEXT_ALIGN = {
 				this.$file.click();
 				break;
 			case "FILE_DOWNLOAD":
-				var stream = new Readable();
-				//stream.push(Array)
-				stream._read = function() {}
+				var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+				saveAs(blob, "hello world.txt");
 				break;
 		}
 	},
