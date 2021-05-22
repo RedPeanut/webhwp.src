@@ -18,12 +18,7 @@
 		"build:markup": "cd workspace/lib/markup && npm run build",
 		"build:hwp.js": "cd workspace/lib/hwp.js && npm run build"
 	},
-	"dependencies": {
-		"ejs": "^3.1.6",
-		"express": "^4.17.1",
-		"multer": "^1.4.2",
-		"per": "0.1.7"
-	},
+	"dependencies": {},
 	"devDependencies": {
 		"@babel/core": "^7.5.5",
 		"@webhwp/hwp.js": "file:workspace/lib/hwp.js",
