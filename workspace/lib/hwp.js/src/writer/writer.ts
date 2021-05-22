@@ -20,18 +20,19 @@ class HWPWriter {
     w.writeAndClose(filepath)
   }
 
-  static toStream(document: HWPDocument) {
+  static toStream(document: HWPDocument): ArrayBuffer {
     
+    return new ArrayBuffer(0)
   }
 
   private document: HWPDocument
   private buffer: []
-  private container: CFB$Container
+  //private container: CFB$Container
 
   constructor(document: HWPDocument) {
     this.document = document
     this.buffer = []
-    this.container = utils.cfb_new()
+    //this.container = utils.cfb_new()
   }
 
   autoSet(): void {}
@@ -48,7 +49,7 @@ class HWPWriter {
   binData(): void {}
 
   writeAndClose(filepath: string): void {
-    writeFile(this.container, filepath)
+    //writeFile(this.container, filepath)
   }
 }
 
