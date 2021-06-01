@@ -14,15 +14,12 @@
 		"postdev": "",
 		"serve": "webpack-dev-server --hot",
 		"build": "",
-		"build:node-hwp": "cd workspace/lib/node-hwp && npm run build",
-		"build:markup": "cd workspace/lib/markup && npm run build",
 		"build:hwp.js": "cd workspace/lib/hwp.js && npm run build"
 	},
 	"dependencies": {},
 	"devDependencies": {
 		"@babel/core": "^7.5.5",
 		"@webhwp/hwp.js": "file:workspace/lib/hwp.js",
-		"@webhwp/node-hwp": "file:workspace/lib/node-hwp",
 		"babel-loader": "^8.0.6",
 		"babel-preset-env": "^1.7.0",
 		"clean-webpack-plugin": "^3.0.0",
