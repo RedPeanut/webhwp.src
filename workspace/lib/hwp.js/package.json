@@ -48,6 +48,7 @@
     "@types/pako": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.9.1",
+    "@webhwp/compound-file-js": "file:../compound-file-js",
     "babel-jest": "^26.3.0",
     "eslint": "^7.7.0",
     "eslint-config-airbnb-typescript": "^9.0.0",

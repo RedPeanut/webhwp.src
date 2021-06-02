@@ -13,16 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import {
-  read,
-  find,
-  CFB$Blob,
-  CFB$Container,
-  CFB$ParsingOptions,
-} from 'cfb'
+import {StreamDirectoryEntry, CompoundFile} from '@webhwp/compound-file-js'
 import { inflate } from 'pako'
-
 import HWPDocument from '../models/document'
 import DocInfo from '../models/docInfo'
 import HWPHeader from '../models/header'
@@ -37,40 +29,40 @@ const FILE_HEADER_BYTES = 256
 const SUPPORTED_VERSION = new HWPVersion(5, 1, 0, 0)
 const SIGNATURE = 'HWP Document File'
 
-function parseFileHeader(container: CFB$Container): HWPHeader {
-  const fileHeader = find(container, 'FileHeader')
+function parseFileHeader(container: CompoundFile): HWPHeader {
 
-  if (!fileHeader) {
+  let fileHeader = container.getRootStorage().findChild(
+    entry => 'FileHeader' === entry.getDirectoryEntryName()
+  ) as StreamDirectoryEntry;
+
+  if (!fileHeader)
     throw new Error('Cannot find FileHeader')
-  }
 
-  const { content } = fileHeader
+  /* Header.ts 에서 수행
+  if (view.getSize() !== FILE_HEADER_BYTES)
+    throw new Error(`FileHeader must be ${FILE_HEADER_BYTES} bytes, Received: ${view.getSize()}`) */
 
-  if (content.length !== FILE_HEADER_BYTES) {
-    throw new Error(`FileHeader must be ${FILE_HEADER_BYTES} bytes, Received: ${content.length}`)
-  }
+  let signature = String.fromCharCode(...fileHeader.getStreamData().slice(0, 17))
+  
+  if (SIGNATURE !== signature)
+    throw new Error(`hwp file's signature should be '${SIGNATURE}'. Received version: '${signature}'`)
 
-  const signature = String.fromCharCode(...Array.from(content.slice(0, 17)))
-  if (SIGNATURE !== signature) {
-    throw new Error(`hwp file's signature should be ${SIGNATURE}. Received version: ${signature}`)
-  }
-
-  const [major, minor, build, revision] = Array.from(content.slice(32, 36)).reverse()
-  const version = new HWPVersion(major, minor, build, revision)
-
-  if (!version.isCompatible(SUPPORTED_VERSION)) {
-    throw new Error(`hwp.js only support ${SUPPORTED_VERSION} format. Received version: ${version}`)
-  }
+  let [major, minor, build, revision] = fileHeader.getStreamData().slice(32, 36).reverse()
+  let version = new HWPVersion(major, minor, build, revision)
+  
+  if (!version.isCompatible(SUPPORTED_VERSION))
+    throw new Error(`hwp.js only support '${SUPPORTED_VERSION}' format. Received version: '${version}'`)
 
   return new HWPHeader(version, signature)
 }
 
-function parseDocInfo(container: CFB$Container): DocInfo {
-  const docInfoEntry = find(container, 'DocInfo')
+function parseDocInfo(container: CompoundFile): DocInfo {
+  const docInfoEntry = container.getRootStorage().findChild(
+    entry => 'DocInfo' === entry.getDirectoryEntryName()
+  );
 
-  if (!docInfoEntry) {
+  if (!docInfoEntry)
     throw new Error('DocInfo not exist')
-  }
 
   const content: Uint8Array = docInfoEntry.content as Uint8Array
   const decodedContent: Uint8Array = inflate(content, { windowBits: -15 })
@@ -78,30 +70,30 @@ function parseDocInfo(container: CFB$Container): DocInfo {
   return new DocInfoParser(decodedContent, container).parse()
 }
 
-function parseSection(container: CFB$Container, sectionNumber: number): Section {
+/* function parseSection(container: CompoundFile, sectionNumber: number): Section {
   const section = find(container, `Root Entry/BodyText/Section${sectionNumber}`)
 
   if (!section) {
-    throw new Error('Section not exist')
+ throw new Error('Section not exist')
   }
 
   const content: Uint8Array = section.content as Uint8Array
   const decodedContent: Uint8Array = inflate(content, { windowBits: -15 })
 
   return new SectionParser(decodedContent).parse()
-}
+} */
 
-function parse(input: CFB$Blob, options?: CFB$ParsingOptions): HWPDocument {
-  const container: CFB$Container = read(input, options)
+function parse(array: Uint8Array): HWPDocument {
+  const container = CompoundFile.fromUint8Array(array)
 
   const header = parseFileHeader(container)
   const docInfo = parseDocInfo(container)
 
   const sections: Section[] = []
 
-  for (let i = 0; i < docInfo.sectionSize; i += 1) {
+  /* for (let i = 0; i < docInfo.sectionSize; i += 1) {
     sections.push(parseSection(container, i))
-  }
+  } */
 
   return new HWPDocument(header, docInfo, sections)
 }

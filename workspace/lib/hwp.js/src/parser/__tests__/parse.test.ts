@@ -17,14 +17,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import {
-  read,
-  find,
-  CFB$Blob,
-  CFB$Container,
-  CFB$ParsingOptions,
-} from 'cfb'
-
+import {StreamDirectoryEntry, CompoundFile} from '@webhwp/compound-file-js'
 import { inflate } from 'pako'
 
 import HWPDocument from '../../models/document'
@@ -44,98 +37,64 @@ const FILE_HEADER_BYTES = 256
 const SUPPORTED_VERSION = new HWPVersion(5, 1, 0, 0)
 const SIGNATURE = 'HWP Document File'
 
-function parseFileHeader(container: CFB$Container): HWPHeader {
-  const fileHeader = find(container, 'FileHeader')
+function parseFileHeader(container: CompoundFile): HWPHeader {
 
-  if (!fileHeader) {
+  let fileHeader = container.getRootStorage().findChild(
+    entry => 'FileHeader' === entry.getDirectoryEntryName()
+  ) as StreamDirectoryEntry;
+
+  if (!fileHeader)
     throw new Error('Cannot find FileHeader')
-  }
 
-  const { content } = fileHeader
+  /* Header.ts 에서 수행
+  if (view.getSize() !== FILE_HEADER_BYTES)
+    throw new Error(`FileHeader must be ${FILE_HEADER_BYTES} bytes, Received: ${view.getSize()}`) */
 
-  if (content.length !== FILE_HEADER_BYTES) {
-    throw new Error(`FileHeader must be ${FILE_HEADER_BYTES} bytes, Received: ${content.length}`)
-  }
+  //console.log(fileHeader instanceof StreamDirectoryEntry)
 
-  const signature = String.fromCharCode(...Array.from(content.slice(0, 17)))
-  if (SIGNATURE !== signature) {
-    throw new Error(`hwp file's signature should be ${SIGNATURE}. Received version: ${signature}`)
-  }
+  let signature = String.fromCharCode(...fileHeader.getStreamData().slice(0, 17))
+  //console.log(SIGNATURE !== signature)
+  if (SIGNATURE !== signature)
+    throw new Error(`hwp file's signature should be '${SIGNATURE}'. Received version: '${signature}'`)
 
-  const [major, minor, build, revision] = Array.from(content.slice(32, 36)).reverse()
-  const version = new HWPVersion(major, minor, build, revision)
-
-  if (!version.isCompatible(SUPPORTED_VERSION)) {
-    throw new Error(`hwp.js only support ${SUPPORTED_VERSION} format. Received version: ${version}`)
-  }
+  let [major, minor, build, revision] = fileHeader.getStreamData().slice(32, 36).reverse()
+  let version = new HWPVersion(major, minor, build, revision)
+  //console.log(version)
+  if (!version.isCompatible(SUPPORTED_VERSION))
+    throw new Error(`hwp.js only support '${SUPPORTED_VERSION}' format. Received version: '${version}'`)
 
   return new HWPHeader(version, signature)
 }
 
-function parseDocInfo(container: CFB$Container): DocInfo {
-  const docInfoEntry = find(container, 'DocInfo')
+function parseDocInfo(container: CompoundFile): DocInfo {
+  const docInfoEntry = container.getRootStorage().findChild(
+    entry => 'DocInfo' === entry.getDirectoryEntryName()
+  ) as StreamDirectoryEntry;
 
   if (!docInfoEntry)
     throw new Error('DocInfo not exist')
 
-  const content: Uint8Array = docInfoEntry.content as Uint8Array
+  const content: Uint8Array = new Uint8Array(docInfoEntry.getStreamData())
   const decodedContent: Uint8Array = inflate(content, { windowBits: -15 })
 
   return new DocInfoParser(decodedContent, container).parse()
 }
 
-function parseSection(container: CFB$Container, sectionNumber: number): Section {
-  const section = find(container, `Root Entry/BodyText/Section${sectionNumber}`)
-
-  if (!section)
-    throw new Error('Section not exist')
-
-  const content: Uint8Array = section.content as Uint8Array
-  const decodedContent: Uint8Array = inflate(content, { windowBits: -15 })
-
-  return new SectionParser(decodedContent).parse()
-}
-
 describe('parse', () => {
-
-  /*
   it('should parse HWP file', () => {
-    const filePath = path.join(__dirname, 'data', 'basicsReport.hwp') //
+    const filePath = path.join(__dirname, 'data', 'basicsReport.hwp')
     const file = fs.readFileSync(filePath)
-    const container = read(file, { type: 'binary' })
-    const docInfo = parseDocInfo(container)
-    console.log(docInfo.paragraphShapes != null)
-    console.log(docInfo.paragraphShapes.length)
-  }) 
-  //*/
 
-  /* it('should parse HWP file', () => {
-    const filePath = path.join(__dirname, 'data', 'noori.hwp')
-    const file = fs.readFileSync(filePath)
-    const document = parse(file, { type: 'binary' })
-  }) */
+    const container = CompoundFile.fromUint8Array(new Uint8Array(file.buffer))
 
-  /* it('should parse HWP file', () => {
-    const filePath = path.join(__dirname, 'data', 'hello.hwp')
-    const file = fs.readFileSync(filePath)
-    const hwpDocument = parse(file, { type: 'binary' })
-  }) */
-
-  ///*
-  it('should parse HWP file', () => {
-    const filePath = path.join(__dirname, 'data', 'kaist-055.hwp')
-    const file = fs.readFileSync(filePath)
-    const container = read(file, { type: 'binary' })
-
-    const header = parseFileHeader(container)
-    //console.log(header.version)
+    const header =  parseFileHeader(container)
     const docInfo = parseDocInfo(container)
 
-    const sections: Section[] = []
+    /* const sections: Section[] = []
     for (let i = 0; i < docInfo.sectionSize; i += 1) {
       sections.push(parseSection(container, i))
-    }
-  }) //*/
+    } */
+  })
 })
 
 

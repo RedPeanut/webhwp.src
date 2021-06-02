@@ -125,7 +125,7 @@ export class StorageDirectoryEntry extends DirectoryEntry {
         let currentNode = this.tree.getRoot();
         if(currentNode == null)
             return;
-        
+
         while(true) {
             if(currentNode != null && visitedNodes.indexOf(currentNode.getValue().getId()) === -1) {
                 visitedNodes.push(currentNode.getValue().getId());

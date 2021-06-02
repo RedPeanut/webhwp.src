@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CFB$Container, find } from 'cfb'
+import { StreamDirectoryEntry, StorageDirectoryEntry, CompoundFile } from '@webhwp/compound-file-js'
 import { inflate } from 'pako'
 
 import FillType from '../constants/fillType'
@@ -35,9 +35,9 @@ class DocInfoParser {
 
   private record: HWPRecord
   private result = new DocInfo()
-  private container: CFB$Container
+  private container: CompoundFile
 
-  constructor(data: Uint8Array, container: CFB$Container) {
+  constructor(data: Uint8Array, container: CompoundFile) {
     this.record = parseRecordTree(data)
     this.container = container
   }
@@ -171,8 +171,17 @@ class DocInfoParser {
     reader.readUInt16()
     const id = reader.readUInt16()
     const extension = reader.readString()
-    const path = `Root Entry/BinData/BIN${`${id.toString(16).toUpperCase()}`.padStart(4, '0')}.${extension}`
-    const payload = find(this.container, path)!.content as Uint8Array
+    //const path = `Root Entry/BinData/BIN${`${id.toString(16).toUpperCase()}`.padStart(4, '0')}.${extension}`
+    const binData = this.container.getRootStorage().findChild(
+        entry => 'BinData' === entry.getDirectoryEntryName()
+    ) as StorageDirectoryEntry;
+    const entryName = `BIN${`${id.toString(16).toUpperCase()}`.padStart(4, '0')}.${extension}`
+    const content = binData.findChild(
+      entry => entryName === entry.getDirectoryEntryName()
+    ).getView().getData()
+    const payload = new Uint8Array(content)
+    //const payload = content
+    //const payload = find(this.container, path)!.content as Uint8Array
     this.result.binData.push(new BinData(extension, inflate(payload, { windowBits: -15 })))
   }
 
@@ -293,3 +302,4 @@ class DocInfoParser {
 }
 
 export default DocInfoParser
+ 

@@ -85,6 +85,10 @@ export class DirectoryEntry {
         }
     }
 
+    getView(): CFDataview {
+        return this.view;
+    }
+
     compareTo(o: DirectoryEntry): number {
         const result = this.getDirectoryEntryName().length - o.getDirectoryEntryName().length;
         if(result === 0) {
