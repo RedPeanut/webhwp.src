@@ -14,7 +14,8 @@
 		"postdev": "",
 		"serve": "webpack-dev-server --hot",
 		"build": "",
-		"build:hwp.js": "cd workspace/lib/hwp.js && npm run build"
+		"build:hwp.js": "cd workspace/lib/hwp.js && npm run build",
+		"build:compound-file-js": "cd workspace/lib/compound-file-js && npm run build"
 	},
 	"dependencies": {},
 	"devDependencies": {

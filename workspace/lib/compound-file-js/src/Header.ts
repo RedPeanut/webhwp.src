@@ -54,11 +54,10 @@ export class Header {
         return new Header(dataView);
     }
 
-
     constructor(dataView: CFDataview) {
-        if(dataView.getSize() !== Header.HEADER_LENGTH) {
-            throw new Error();
-        }
+        if(dataView.getSize() !== Header.HEADER_LENGTH)
+            throw new Error(`FileHeader must be ${Header.HEADER_LENGTH} bytes, Received: ${dataView.getSize()}`);
+
         if(!equal(Header.HEADER_SIGNATURE, dataView.subView(Header.FLAG_POSITION.SIGNATURE, Header.FLAG_POSITION.SIGNATURE + 8).getData()))
             throw new Error();
         if(!equal(Header.MINOR_VERSION_3, dataView.subView(Header.FLAG_POSITION.MINOR_VERSION, Header.FLAG_POSITION.MINOR_VERSION +2).getData()))

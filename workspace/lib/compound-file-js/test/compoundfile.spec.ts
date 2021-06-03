@@ -1,8 +1,8 @@
-import {CompoundFile} from "../src/CompoundFile";
+import { CompoundFile } from "../src/CompoundFile";
 import { expect, assert } from "chai";
-import {RootStorageDirectoryEntry} from "../src/directory/RootStorageDirectoryEntry";
+import { RootStorageDirectoryEntry } from "../src/directory/RootStorageDirectoryEntry";
 import fs from "fs";
-import {sprintf} from "printj";
+import { sprintf } from "printj";
 import FileSaver from "file-saver";
 //var Blob = require('blob');
 
@@ -52,7 +52,7 @@ describe('compound file test', () => {
     //*/
 
     /*
-    it('read', () => {
+    it('read and list', () => {
         let blob = fs.readFileSync(__dirname+'/data/blank.hwp');
         let container = CompoundFile.fromUint8Array(new Uint8Array(blob.buffer));
         //let container = CompoundFile.fromUint8Array(blob.buffer as Uint8Array);
@@ -63,6 +63,7 @@ describe('compound file test', () => {
             console.log(sprintf('entry[%d] = %s', i, entry.getDirectoryEntryName()));
         }
     });
+    //*/
 
     it('find', () => {
         let blob = fs.readFileSync(__dirname+'/data/blank.hwp');
