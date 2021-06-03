@@ -82,7 +82,7 @@ class HWPViewer {
 
   constructor(container: HTMLElement, data: Uint8Array, option: CFB$ParsingOptions = { type: 'binary' }) {
     this.container = container
-    this.hwpDocument = parsePage(parse(data, option))
+    //this.hwpDocument = parsePage(parse(data, option))
     this.draw()
   }
 

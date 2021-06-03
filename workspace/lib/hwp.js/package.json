@@ -48,7 +48,6 @@
     "@types/pako": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.9.1",
-    "@webhwp/compound-file-js": "file:../compound-file-js",
     "babel-jest": "^26.3.0",
     "eslint": "^7.7.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
@@ -60,6 +59,7 @@
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "@webhwp/compound-file-js": "file:../compound-file-js",
     "cfb": "^1.2.0",
     "pako": "^1.0.11"
   }

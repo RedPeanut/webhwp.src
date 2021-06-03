@@ -56,6 +56,7 @@ export default [
       strip({
         include: [
           './node_modules/cfb/cfb.js',
+          './node_modules/@webhwp/compound-file-js/dist/index.js',
         ],
         functions: ['get_fs', 'fs.*'],
       }),

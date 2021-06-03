@@ -39,7 +39,7 @@ class HWPWriter {
 
   fileHeader(): void {
     //ForFileHeader.write(this.document.header, this.container)
-    new ForFileHeader().write(this.document.header, this.container)
+    //new ForFileHeader().write(this.document.header, this.container)
   }
 
   docInfo(): void {}

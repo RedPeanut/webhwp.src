@@ -59,12 +59,12 @@ function parseFileHeader(container: CompoundFile): HWPHeader {
 function parseDocInfo(container: CompoundFile): DocInfo {
   const docInfoEntry = container.getRootStorage().findChild(
     entry => 'DocInfo' === entry.getDirectoryEntryName()
-  );
+  ) as StreamDirectoryEntry
 
   if (!docInfoEntry)
     throw new Error('DocInfo not exist')
 
-  const content: Uint8Array = docInfoEntry.content as Uint8Array
+  const content: Uint8Array = new Uint8Array(docInfoEntry.getStreamData())
   const decodedContent: Uint8Array = inflate(content, { windowBits: -15 })
 
   return new DocInfoParser(decodedContent, container).parse()
