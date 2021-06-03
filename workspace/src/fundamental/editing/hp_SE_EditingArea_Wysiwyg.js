@@ -17,7 +17,7 @@ import {
 } from "@webhwp/hwp.js";
 
 import Readable from "stream"
-import { saveAs } from "file-saver";
+import FileSaver from "file-saver";
 
 const BORDER_WIDTH = [
 	"0.1mm",
@@ -278,13 +278,31 @@ const TEXT_ALIGN = {
 	$ON_EXECCOMMAND: function(sCommand, bUserInterface, vValue) {
 		//console.log("$ON_EXECCOMMAND is called...");
 		//console.log("sCommand = " + sCommand);
+
+		var self = this;
+
 		switch (sCommand) {
 			case "FILE_LOAD":
 				this.$file.click();
 				break;
 			case "FILE_DOWNLOAD":
-				var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
-				saveAs(blob, "hello world.txt");
+				//var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+				//FileSaver.saveAs(blob, "hello world.txt");
+				///*
+				var filenames = ["blank","basicsReport","kaist-055","noori"];
+				fetch("files/"+filenames[1]+".hwp")
+				.then(res => res.arrayBuffer())
+				.then(res => {
+					console.log("then() is called...");
+					var array = new Uint8Array(res);
+					var container = CompoundFile.fromUint8Array(array);
+					FileSaver.saveAs(new Blob([new Uint8Array(container.asBytes())]), filenames[1]+"-saveAs.hwp");
+				})
+				.catch((e) => {
+					console.log("catch() is called...");
+					console.trace();
+				}); 
+				//*/
 				break;
 		}
 	},
