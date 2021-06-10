@@ -1,10 +1,4 @@
-import {
-  write,
-  writeFile,
-  CFB$Container,
-  utils
- } from 'cfb'
-
+import { CompoundFile } from '@webhwp/compound-file-js'
 import HWPHeader from '../models/header'
 import HWPVersion from '../models/version'
 
@@ -15,10 +9,22 @@ class ForFileHeader {
   //SUPPORTED_VERSION: HWPVersion = new HWPVersion(5, 1, 0, 0)
   //SIGNATURE: string = 'HWP Document File'
 
-  public write(header: HWPHeader, container: CFB$Container): void {
+  //private buffer: ArrayBuffer = new ArrayBuffer(this.FILE_HEADER_BYTES)
+  //private buffer: Uint8Array
+  //private buffer: [] = []
+  //private buffer: number[] = []
+  private header: HWPHeader
+  private container: CompoundFile
+
+  constructor(header: HWPHeader, container: CompoundFile) {
+    this.header = header
+    this.container = container
+  }
+
+  public write(): void {
     this.signature()
-    this.fileVersion(header.version)
-    this.properties(header)
+    this.fileVersion(this.header.version)
+    this.properties(this.header)
     this.zero216()
   }
 
@@ -45,15 +51,6 @@ class ForFileHeader {
 
   private zero216() {
     throw new Error('Method not implemented.')
-  }
-
-  //private buffer: ArrayBuffer = new ArrayBuffer(this.FILE_HEADER_BYTES)
-  //private buffer: Uint8Array
-  //private buffer: [] = []
-  private buffer: number[] = []
-
-  constructor(header?: HWPHeader | null, container?: CFB$Container | null) {
-
   }
 
 }

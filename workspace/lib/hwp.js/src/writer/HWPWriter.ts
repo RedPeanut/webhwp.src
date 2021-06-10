@@ -1,12 +1,9 @@
-import {
-  write,
-  writeFile,
-  CFB$Container,
-  utils
-} from 'cfb'
+import { CompoundFile } from '@webhwp/compound-file-js'
 
 import HWPDocument from '../models/document'
 import ForFileHeader from './ForFileHeader'
+import ForDocInfo from './docinfo/ForDocInfo'
+import AutoSetter from './autosetter/AutoSetter'
 
 class HWPWriter {
 
@@ -27,22 +24,30 @@ class HWPWriter {
 
   private document: HWPDocument
   private buffer: []
-  //private container: CFB$Container
+  private compoundFile: CompoundFile
 
   constructor(document: HWPDocument) {
     this.document = document
     this.buffer = []
-    //this.container = utils.cfb_new()
+    this.compoundFile = new CompoundFile()
   }
 
-  autoSet(): void {}
+  autoSet(): void {
+    let iid = new InstanceID()
+    AutoSetter.autoSet(this.document, iid)
+  }
 
   fileHeader(): void {
-    //ForFileHeader.write(this.document.header, this.container)
-    //new ForFileHeader().write(this.document.header, this.container)
+    const rootStorage = this.compoundFile.getRootStorage()
+    rootStorage.addStorage('FileHeader')
+    new ForFileHeader(this.document.header, this.compoundFile).write()
   }
 
-  docInfo(): void {}
+  docInfo(): void {
+    const rootStorage = this.compoundFile.getRootStorage()
+    rootStorage.addStorage('DocInfo')
+    new ForDocInfo(this.document.info, this.compoundFile).write()
+  }
   
   bodyText(): void {}
 
