@@ -9,13 +9,13 @@
 	},
 	"scripts": {
 		"test": "jest",
-		"predev": "node make",
-		"dev": "nodemon server.js",
-		"postdev": "",
-		"serve": "webpack-dev-server --hot",
-		"build": "",
+		"coverage": "jest --coverage",
+		"serve": "webpack-dev-server --hot --mode development",
+		"build": "webpack --mode production",
 		"build:hwp.js": "cd workspace/lib/hwp.js && npm run build",
-		"build:compound-file-js": "cd workspace/lib/compound-file-js && npm run build"
+		"build:compound-file-js": "cd workspace/lib/compound-file-js && npm run build",
+		"install:hwp.js": "cd workspace/lib/hwp.js && npm install",
+		"install:compound-file-js": "cd workspace/lib/compound-file-js && npm install"
 	},
 	"dependencies": {},
 	"devDependencies": {
@@ -27,11 +27,7 @@
 		"copy-webpack-plugin": "^5.0.4",
 		"file-saver": "^2.0.5",
 		"jest": "^26.6.3",
-		"node-minify": "^0.8.1",
-		"nodemon": "^2.0.7",
-		"uglifyjs": "^2.4.10",
 		"uglifyjs-webpack-plugin": "^2.1.3",
-		"webmake": ">=0.3.19",
 		"webpack": "^4.16.5",
 		"webpack-cli": "^3.1.0",
 		"webpack-dev-server": "^3.1.5"

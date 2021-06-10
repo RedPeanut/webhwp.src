@@ -9,7 +9,7 @@ module.exports = (env = {}) => {
 	const pkg = require("./package.json");
 
 	return {
-		mode: env.production ? "production" : "development",
+		//mode: env.production ? "production" : "development",
 		entry: {
 			"webhwp": "./workspace/src/bundle/index.js"
 		},
