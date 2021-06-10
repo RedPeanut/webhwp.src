@@ -5,8 +5,21 @@
   },
   "rules": {
     "@typescript-eslint/semi": ["error", "never"],
-    "no-bitwise": "off",
+    "@typescript-eslint/lines-between-class-members": "off",
     "class-methods-use-this": "off",
-    "no-param-reassign": "off"
+    "comma-dangle": [
+      "error", {
+        "arrays": "ignore",
+        "functions": "ignore",
+        "objects": "ignore"
+      }
+    ],
+    "curly": "off",
+    "nonblock-statement-body-position": "off",
+    "no-bitwise": "off",
+    "no-param-reassign": "off",
+    "padded-blocks": "off",
+    "spaced-comment": "off",
+    "yoda": "off"
   }
 }

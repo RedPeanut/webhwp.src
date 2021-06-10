@@ -171,15 +171,14 @@ class DocInfoParser {
     reader.readUInt16()
     const id = reader.readUInt16()
     const extension = reader.readString()
-    //const path = `Root Entry/BinData/BIN${`${id.toString(16).toUpperCase()}`.padStart(4, '0')}.${extension}`
     const binData = this.container.getRootStorage().findChild(
-        entry => 'BinData' === entry.getDirectoryEntryName()
-    ) as StorageDirectoryEntry;
+      (entry) => 'BinData' === entry.getDirectoryEntryName()
+    ) as StorageDirectoryEntry
     const entryName = `BIN${`${id.toString(16).toUpperCase()}`.padStart(4, '0')}.${extension}`
     const content = binData.findChild(
-      entry => entryName === entry.getDirectoryEntryName()
-    ).getView().getData()
-    const payload = new Uint8Array(content)
+      (entry) => entryName === entry.getDirectoryEntryName()
+    ) as StreamDirectoryEntry
+    const payload = new Uint8Array(content.getStreamData())
     //const payload = content
     //const payload = find(this.container, path)!.content as Uint8Array
     this.result.binData.push(new BinData(extension, inflate(payload, { windowBits: -15 })))
@@ -302,4 +301,3 @@ class DocInfoParser {
 }
 
 export default DocInfoParser
- 

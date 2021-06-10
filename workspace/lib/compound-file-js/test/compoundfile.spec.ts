@@ -1,6 +1,8 @@
 import { CompoundFile } from "../src/CompoundFile";
 import { expect, assert } from "chai";
 import { RootStorageDirectoryEntry } from "../src/directory/RootStorageDirectoryEntry";
+import { StreamDirectoryEntry } from "../src/directory/StreamDirectoryEntry";
+import { StorageDirectoryEntry } from "../src/directory/StorageDirectoryEntry";
 import fs from "fs";
 import { sprintf } from "printj";
 import FileSaver from "file-saver";
@@ -65,6 +67,7 @@ describe('compound file test', () => {
     });
     //*/
 
+    /*
     it('find', () => {
         let blob = fs.readFileSync(__dirname+'/data/blank.hwp');
         let container = CompoundFile.fromUint8Array(new Uint8Array(blob.buffer));
@@ -74,7 +77,7 @@ describe('compound file test', () => {
     });
     //*/
 
-    it('read and save', () => {
+    /* it('read and save', () => {
         let blob = fs.readFileSync(__dirname+'/data/blank.hwp');
         let container = CompoundFile.fromUint8Array(new Uint8Array(blob.buffer));
         //let blob0 = new Blob(); //Blob is not defined
@@ -83,5 +86,53 @@ describe('compound file test', () => {
         //let blob2 = new Blob([container.asBytes()]); //Type 'number[]' is not assignable to type 'BlobPart'
         //let blob3 = new Blob(container.asBytes() as BlobPart[]); //Conversion of type 'number[]' to type 'BlobPart[]' may be a mistake
         //FileSaver.saveAs(new Blob([new Uint8Array(container.asBytes())]), __dirname+"/data/blank-saveAs.hwp");
+    }); */
+
+    it('read and list', () => {
+        let blob = fs.readFileSync(__dirname+'/data/basicsReport.hwp');
+        let container = CompoundFile.fromUint8Array(new Uint8Array(blob.buffer));
+        /* let children = container.getRootStorage().children();
+        for (let i = 0; i < children.length; i++) {
+            let entry = children[i];
+            console.log(sprintf('entry[%d] = %s', i, entry.getDirectoryEntryName()));
+        } */
+
+        /*
+        entry[0] = SummaryInformation
+        entry[1] = FileHeader
+        entry[2] = BodyText
+        entry[3] = DocInfo
+        entry[4] = BinData
+        entry[5] = PrvText
+        entry[6] = Scripts
+        entry[7] = PrvImage
+        entry[8] = DocOptions
+        entry[9] = HwpSummaryInformation
+        */
+
+        const binData = container.getRootStorage().findChild(
+            entry => 'BinData' === entry.getDirectoryEntryName()
+        ) as StorageDirectoryEntry;
+
+        //console.log(binData instanceof StorageDirectoryEntry);
+        //console.log(binData instanceof StreamDirectoryEntry);
+
+        /* let children = binData.children();
+        for (let i = 0; i < children.length; i++) {
+            let entry = children[i];
+            console.log(sprintf('entry[%d] = %s', i, entry.getDirectoryEntryName()));
+        } */
+
+        let entryName = 'BIN0001.bmp';
+        /* let entry = container.getRootStorage().findChild(
+            entry => entryName === entry.getDirectoryEntryName()
+        ); */
+        let entry = binData.findChild(
+            entry => entryName === entry.getDirectoryEntryName()
+        )
+        console.log('entry = ' + entry);
+
+
+
     });
 });

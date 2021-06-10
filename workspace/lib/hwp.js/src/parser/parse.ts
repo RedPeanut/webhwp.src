@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { StreamDirectoryEntry, CompoundFile } from '@webhwp/compound-file-js'
+import { StreamDirectoryEntry, StorageDirectoryEntry, CompoundFile } from '@webhwp/compound-file-js'
 import { inflate } from 'pako'
 import HWPDocument from '../models/document'
 import DocInfo from '../models/docInfo'
@@ -23,17 +23,17 @@ import Section from '../models/section'
 import DocInfoParser from './DocInfoParser'
 import SectionParser from './SectionParser'
 
-// @link https://github.com/hahnlee/hwp.js/blob/master/docs/hwp/5.0/FileHeader.md#%ED%8C%8C%EC%9D%BC-%EC%9D%B8%EC%8B%9D-%EC%A0%95%EB%B3%B4
-const FILE_HEADER_BYTES = 256
+//@link https://github.com/hahnlee/hwp.js/blob/master/docs/hwp/5.0/FileHeader.md#%ED%8C%8C%EC%9D%BC-%EC%9D%B8%EC%8B%9D-%EC%A0%95%EB%B3%B4
+//const FILE_HEADER_BYTES = 256
 
 const SUPPORTED_VERSION = new HWPVersion(5, 1, 0, 0)
 const SIGNATURE = 'HWP Document File'
 
 function parseFileHeader(container: CompoundFile): HWPHeader {
 
-  let fileHeader = container.getRootStorage().findChild(
-    entry => 'FileHeader' === entry.getDirectoryEntryName()
-  ) as StreamDirectoryEntry;
+  const fileHeader = container.getRootStorage().findChild(
+    (entry) => 'FileHeader' === entry.getDirectoryEntryName()
+  ) as StreamDirectoryEntry
 
   if (!fileHeader)
     throw new Error('Cannot find FileHeader')
@@ -42,14 +42,14 @@ function parseFileHeader(container: CompoundFile): HWPHeader {
   if (view.getSize() !== FILE_HEADER_BYTES)
     throw new Error(`FileHeader must be ${FILE_HEADER_BYTES} bytes, Received: ${view.getSize()}`) */
 
-  let signature = String.fromCharCode(...fileHeader.getStreamData().slice(0, 17))
-  
+  const signature = String.fromCharCode(...fileHeader.getStreamData().slice(0, 17))
+
   if (SIGNATURE !== signature)
     throw new Error(`hwp file's signature should be '${SIGNATURE}'. Received version: '${signature}'`)
 
-  let [major, minor, build, revision] = fileHeader.getStreamData().slice(32, 36).reverse()
-  let version = new HWPVersion(major, minor, build, revision)
-  
+  const [major, minor, build, revision] = fileHeader.getStreamData().slice(32, 36).reverse()
+  const version = new HWPVersion(major, minor, build, revision)
+
   if (!version.isCompatible(SUPPORTED_VERSION))
     throw new Error(`hwp.js only support '${SUPPORTED_VERSION}' format. Received version: '${version}'`)
 
@@ -58,7 +58,7 @@ function parseFileHeader(container: CompoundFile): HWPHeader {
 
 function parseDocInfo(container: CompoundFile): DocInfo {
   const docInfoEntry = container.getRootStorage().findChild(
-    entry => 'DocInfo' === entry.getDirectoryEntryName()
+    (entry) => 'DocInfo' === entry.getDirectoryEntryName()
   ) as StreamDirectoryEntry
 
   if (!docInfoEntry)
@@ -70,18 +70,24 @@ function parseDocInfo(container: CompoundFile): DocInfo {
   return new DocInfoParser(decodedContent, container).parse()
 }
 
-/* function parseSection(container: CompoundFile, sectionNumber: number): Section {
-  const section = find(container, `Root Entry/BodyText/Section${sectionNumber}`)
+function parseSection(container: CompoundFile, sectionNumber: number): Section {
+  const bodyText = container.getRootStorage().findChild(
+    (entry) => 'BodyText' === entry.getDirectoryEntryName()
+  ) as StorageDirectoryEntry
 
-  if (!section) {
- throw new Error('Section not exist')
-  }
+  const entryName = `Section${sectionNumber}`
+  const section = bodyText.findChild(
+    (entry) => entryName === entry.getDirectoryEntryName()
+  ) as StreamDirectoryEntry
 
-  const content: Uint8Array = section.content as Uint8Array
+  if (!section)
+    throw new Error('Section not exist')
+
+  const content: Uint8Array = new Uint8Array(section.getStreamData())
   const decodedContent: Uint8Array = inflate(content, { windowBits: -15 })
 
   return new SectionParser(decodedContent).parse()
-} */
+}
 
 function parse(array: Uint8Array): HWPDocument {
   const container = CompoundFile.fromUint8Array(array)
@@ -90,10 +96,9 @@ function parse(array: Uint8Array): HWPDocument {
   const docInfo = parseDocInfo(container)
 
   const sections: Section[] = []
-
-  /* for (let i = 0; i < docInfo.sectionSize; i += 1) {
+  for (let i = 0; i < docInfo.sectionSize; i += 1) {
     sections.push(parseSection(container, i))
-  } */
+  }
 
   return new HWPDocument(header, docInfo, sections)
 }
