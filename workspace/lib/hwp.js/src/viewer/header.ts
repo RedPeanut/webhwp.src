@@ -86,7 +86,7 @@ class Header {
     }
   }
 
-  distory() {
+  destory() {
     this.pages.forEach((page) => {
       this.observer.unobserve(page)
     })

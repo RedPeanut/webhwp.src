@@ -17,7 +17,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import {StreamDirectoryEntry, CompoundFile} from '@webhwp/compound-file-js'
+import { StreamDirectoryEntry, CompoundFile } from '@webhwp/compound-file-js'
 import { inflate } from 'pako'
 
 import HWPDocument from '../../models/document'
@@ -69,7 +69,7 @@ function parseFileHeader(container: CompoundFile): HWPHeader {
 function parseDocInfo(container: CompoundFile): DocInfo {
   const docInfoEntry = container.getRootStorage().findChild(
     entry => 'DocInfo' === entry.getDirectoryEntryName()
-  ) as StreamDirectoryEntry;
+  ) as StreamDirectoryEntry
 
   if (!docInfoEntry)
     throw new Error('DocInfo not exist')

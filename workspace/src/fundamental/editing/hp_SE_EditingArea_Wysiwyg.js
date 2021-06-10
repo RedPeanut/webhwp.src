@@ -317,6 +317,7 @@ const TEXT_ALIGN = {
 		return mark;
 	},
 	createPage: function(section, index) {
+
 		const page = document.createElement("div");
 		page.style.boxShadow = "0 1px 3px 1px rgba(60,64,67,.15)";
 		page.style.backgroundColor = "#FFF";

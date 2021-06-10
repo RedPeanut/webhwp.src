@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {StreamDirectoryEntry, CompoundFile} from '@webhwp/compound-file-js'
+import { StreamDirectoryEntry, CompoundFile } from '@webhwp/compound-file-js'
 import { inflate } from 'pako'
 import HWPDocument from '../models/document'
 import DocInfo from '../models/docInfo'
