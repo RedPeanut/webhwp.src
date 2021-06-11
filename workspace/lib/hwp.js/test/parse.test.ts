@@ -21,12 +21,12 @@ import { StreamDirectoryEntry, StorageDirectoryEntry, CompoundFile } from '@webh
 import { inflate } from 'pako'
 
 //import HWPDocument from '../../models/document'
-import DocInfo from '../../models/docInfo'
-import HWPHeader from '../../models/header'
-import HWPVersion from '../../models/version'
-import Section from '../../models/section'
-import DocInfoParser from '../DocInfoParser'
-import SectionParser from '../SectionParser'
+import DocInfo from '../src/models/docInfo'
+import HWPHeader from '../src/models/header'
+import HWPVersion from '../src/models/version'
+import Section from '../src/models/section'
+import DocInfoParser from '../src/parser/DocInfoParser'
+import SectionParser from '../src/parser/SectionParser'
 
 //import parse from '../parse'
 //import { parse, parseFileHeader, parseDocInfo, parseSection } from '../parse'
