@@ -29,7 +29,7 @@ class ForFileHeader {
   }
 
   private signature(): void {
-    let signature: string = 'HWP Document File';
+    const signature: string = 'HWP Document File'
     ///* this.buffer =  */this.buffer.push(Array.from(...signature))
     //this.buffer.push(Array.from(signature.split('')))
     //this.buffer.push(...Array.from(signature.split('')))

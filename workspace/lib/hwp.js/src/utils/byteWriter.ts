@@ -1,4 +1,4 @@
-import { FlushValues } from "pako"
+import { FlushValues } from 'pako'
 
 class ByteWriter {
 
@@ -18,12 +18,12 @@ class ByteWriter {
     this.view.setInt32(this.byteOffset, value)
     this.byteOffset += 4
   }
-  
+
   writeUInt16(value: number): void {
     this.view.setUint16(this.byteOffset, value)
     this.byteOffset += 2
   }
-  
+
   writeInt16(value: number): void {
     this.view.setUint16(this.byteOffset, value)
     this.byteOffset += 2
@@ -60,5 +60,3 @@ class ByteWriter {
 }
 
 export default ByteWriter
-
-

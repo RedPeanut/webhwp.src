@@ -1,6 +1,6 @@
 module.exports = {
   testMatch: [
-    '<rootDir>/src/parser/**/*.test.ts',
-    //'<rootDir>/src/utils/**/*.test.ts',
+    //'<rootDir>/test/**/*.test.ts',
+    '<rootDir>/test/**/writer.test.ts'
   ]
 }

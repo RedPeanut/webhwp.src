@@ -4,11 +4,12 @@ import HWPDocument from '../models/document'
 import ForFileHeader from './ForFileHeader'
 import ForDocInfo from './docinfo/ForDocInfo'
 import AutoSetter from './autosetter/AutoSetter'
+import InstanceID from './autosetter/InstanceID'
 
 class HWPWriter {
 
   static toFile(document: HWPDocument, filepath: string): void {
-    let w: HWPWriter = new HWPWriter(document)
+    const w: HWPWriter = new HWPWriter(document)
     w.autoSet()
     w.fileHeader()
     w.docInfo()
@@ -18,7 +19,6 @@ class HWPWriter {
   }
 
   static toStream(document: HWPDocument): ArrayBuffer {
-    
     return new ArrayBuffer(0)
   }
 
@@ -33,7 +33,7 @@ class HWPWriter {
   }
 
   autoSet(): void {
-    let iid = new InstanceID()
+    const iid = new InstanceID()
     AutoSetter.autoSet(this.document, iid)
   }
 
@@ -48,7 +48,7 @@ class HWPWriter {
     rootStorage.addStorage('DocInfo')
     new ForDocInfo(this.document.info, this.compoundFile).write()
   }
-  
+
   bodyText(): void {}
 
   binData(): void {}

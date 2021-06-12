@@ -4,8 +4,9 @@
     "project": "./tsconfig.lint.json"
   },
   "rules": {
-    "@typescript-eslint/semi": ["error", "never"],
     "@typescript-eslint/lines-between-class-members": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/semi": ["error", "never"],
     "class-methods-use-this": "off",
     "comma-dangle": [
       "error", {
@@ -15,9 +16,11 @@
       }
     ],
     "curly": "off",
+    "max-len": "warn",
     "nonblock-statement-body-position": "off",
     "no-bitwise": "off",
     "no-param-reassign": "off",
+    "no-plusplus": "warn",
     "padded-blocks": "off",
     "spaced-comment": "off",
     "yoda": "off"

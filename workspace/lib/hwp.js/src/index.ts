@@ -24,7 +24,7 @@ import { CharType } from './models/char'
 import DocInfoParser from './parser/DocInfoParser'
 import SectionParser from './parser/SectionParser'
 import parse from './parser'
-import parsePage from './parser/parsePage';
+import parsePage from './parser/parsePage'
 import Viewer from './viewer'
 
 import { isTable, isShape, isPicture } from './utils/controlUtil'
