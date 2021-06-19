@@ -1,17 +1,4 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "noImplicitAny": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "target": "es5",
-    "sourceMap": true,
-    "outDir": "./dist",
-    "declaration": true
-  },
+  "extends": "./tsconfig.base.json",
   "include": ["src/**/*"],
-  "lib": [
-    "es6",
-    "dom"
-  ]
 }
