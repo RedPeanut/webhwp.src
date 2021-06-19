@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "del-cli dist",
     "lint": "eslint ./src ./test",
-    "test": "mocha -r ts-node/register -r file-saver test/**/compoundfile.spec.ts",
+    "test": "mocha -r ts-node/register test/**/*.test.ts",
     "benchmark": "mocha -r ts-node/register benchmark/**/*.spec.ts",
     "build:tsc": "tsc",
     "build": "npm-run-all clean test lint build:tsc"

@@ -9,7 +9,8 @@
     "@typescript-eslint/semi": ["error", "never"],
     "class-methods-use-this": "off",
     "comma-dangle": [
-      "error", {
+      "error",
+      {
         "arrays": "ignore",
         "functions": "ignore",
         "objects": "ignore"
