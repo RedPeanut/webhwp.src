@@ -1,5 +1,4 @@
 node_modules/
 .idea/
 dist/
-src/index.ts
 package-lock.json
