@@ -3,7 +3,7 @@ import {RedBlackTree} from "./RedBlackTree";
 
 export class UpdateHandler<T> {
 
-     protected readonly tree: RedBlackTree<T>;
+    protected readonly tree: RedBlackTree<T>;
 
     constructor(tree: RedBlackTree<T>) {
         this.tree = tree;

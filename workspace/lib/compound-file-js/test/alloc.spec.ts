@@ -68,7 +68,7 @@ describe('allocation table test', () => {
             allocationTable.registerSector(sectorPosition, previousSectorPosition);
             previousSectorPosition = sectorPosition;
         }
-//        verify(fatToDIFATFacade, times(2)).registerFatSectorInDIFAT(anyInt());
+        //verify(fatToDIFATFacade, times(2)).registerFatSectorInDIFAT(anyInt());
         const chain = allocationTable.buildChain(firstSectorPosition);
         expect(chain.length).eq(129);
     });

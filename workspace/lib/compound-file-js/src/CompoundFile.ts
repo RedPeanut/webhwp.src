@@ -52,14 +52,14 @@ export class CompoundFile {
         faTtoDIFATFacade.setFat(this.fat);
         this.miniFat = new MiniFAT(this.sectors, this.header, this.fat);
         const miniStreamRW = new MiniStreamRW(this.miniFat, this.fat, this.getMiniStreamFirstSectorLocation(), this.getMiniStreamLength(), this.sectors, this.header);
-        const me = this;
+        const self = this;
         const listenableMiniStream: StreamRW = {
             read: (startingSector: number, lengthOrFromIncl: number, toExcl?: number) => miniStreamRW.read(startingSector, lengthOrFromIncl, toExcl),
 
             write: (data: number[]) => {
                 const firstSectorLocation = miniStreamRW.write(data);
-                me.setMiniStreamFirstSectorLocation(miniStreamRW.getMiniStreamFirstSectorPosition());
-                me.setMiniStreamLength(miniStreamRW.getMiniStreamLength());
+                self.setMiniStreamFirstSectorLocation(miniStreamRW.getMiniStreamFirstSectorPosition());
+                self.setMiniStreamLength(miniStreamRW.getMiniStreamLength());
                 return firstSectorLocation;
             },
 
@@ -67,8 +67,8 @@ export class CompoundFile {
 
             append: (startingSector: number, currentSize: number, data: number[]) => {
                 const firstSectorLocation = miniStreamRW.append(startingSector, currentSize, data);
-                me.setMiniStreamFirstSectorLocation(miniStreamRW.getMiniStreamFirstSectorPosition());
-                me.setMiniStreamLength(miniStreamRW.getMiniStreamLength());
+                self.setMiniStreamFirstSectorLocation(miniStreamRW.getMiniStreamFirstSectorPosition());
+                self.setMiniStreamLength(miniStreamRW.getMiniStreamLength());
                 return firstSectorLocation;
             }
         };

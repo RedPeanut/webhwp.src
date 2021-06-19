@@ -65,7 +65,7 @@ export class SimpleDataview implements CFDataview {
     }
 
     readAt(position: number, length: number): number[] {
-            return this.data.slice(position, position + length);
+        return this.data.slice(position, position + length);
     }
 
     isEmpty(): boolean {

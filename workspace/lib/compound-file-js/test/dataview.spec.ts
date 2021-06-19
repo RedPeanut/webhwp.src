@@ -20,7 +20,7 @@ describe('should throw exception on overflow during write operation', () => {
 
     it('Fixed Size Chunked Dataview', () => {
         const view = new FixedSizeChunkedDataview(512,
-        [new SimpleDataview(new Array(512)), new SimpleDataview(new Array(512))]);
+            [new SimpleDataview(new Array(512)), new SimpleDataview(new Array(512))]);
         expect(() => view.writeAt(1024, [1])).to.throw();
         expect(() => view.writeAt(1020, new Array(6))).to.throw();
     });

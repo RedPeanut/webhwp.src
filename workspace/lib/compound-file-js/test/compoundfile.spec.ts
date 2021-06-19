@@ -89,8 +89,8 @@ describe('compound file test', () => {
     }); */
 
     it('read and list', () => {
-        let blob = fs.readFileSync(__dirname+'/data/basicsReport.hwp');
-        let container = CompoundFile.fromUint8Array(new Uint8Array(blob.buffer));
+        const blob = fs.readFileSync(__dirname+'/data/basicsReport.hwp');
+        const container = CompoundFile.fromUint8Array(new Uint8Array(blob.buffer));
         /* let children = container.getRootStorage().children();
         for (let i = 0; i < children.length; i++) {
             let entry = children[i];
@@ -123,11 +123,11 @@ describe('compound file test', () => {
             console.log(sprintf('entry[%d] = %s', i, entry.getDirectoryEntryName()));
         } */
 
-        let entryName = 'BIN0001.bmp';
+        const entryName = 'BIN0001.bmp';
         /* let entry = container.getRootStorage().findChild(
             entry => entryName === entry.getDirectoryEntryName()
         ); */
-        let entry = binData.findChild(
+        const entry = binData.findChild(
             entry => entryName === entry.getDirectoryEntryName()
         )
         console.log('entry = ' + entry);
