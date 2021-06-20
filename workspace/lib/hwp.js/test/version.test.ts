@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import HWPVersion from '../version'
+import HWPVersion from '../src/models/version'
 
 describe('HWPVersion', () => {
   it('should make correct version string', () => {

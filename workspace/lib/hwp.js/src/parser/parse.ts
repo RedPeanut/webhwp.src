@@ -38,7 +38,7 @@ export function parseFileHeader(container: CompoundFile): HWPHeader {
   if (!fileHeader)
     throw new Error('Cannot find FileHeader')
 
-  /* Header.ts 에서 수행
+  /* compound-file-js Header.ts 에서 수행
   if (view.getSize() !== FILE_HEADER_BYTES)
     throw new Error(`FileHeader must be ${FILE_HEADER_BYTES} bytes, Received: ${view.getSize()}`) */
 

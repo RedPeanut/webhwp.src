@@ -24,24 +24,16 @@ import CaratLocation from './caratLocation'
 import LayoutCompatibility from './layoutCompatibility'
 
 class DocInfo {
+
   sectionSize: number = 0
-
   charShapes: CharShape[] = []
-
   fontFaces: FontFace[] = []
-
   binData: BinData[] = []
-
   borderFills: BorderFill[] = []
-
   paragraphShapes: ParagraphShape[] = []
-
   startingIndex: StartingIndex = new StartingIndex()
-
   caratLocation: CaratLocation = new CaratLocation()
-
   compatibleDocument: number = 0
-
   layoutCompatiblity: LayoutCompatibility = new LayoutCompatibility()
 
   getCharShpe(index: number): CharShape | undefined {
