@@ -22,6 +22,7 @@
     "no-bitwise": "off",
     "no-param-reassign": "off",
     "no-plusplus": "warn",
+    "operator-assignment": "off",
     "padded-blocks": "off",
     "spaced-comment": "off",
     "yoda": "off"

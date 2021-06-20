@@ -40,3 +40,12 @@ export function getFlag(bits: number, position: number): boolean {
   const mask: number = 1 << position
   return (bits & mask) === mask
 }
+
+export function setFlag(bits: number, position:number, flag: boolean): number {
+  if (flag) {
+    bits = bits | (0x1 << position)
+  } else if ((bits & (0x1 << position)) !== 0) {
+    bits = bits ^ (0x1 << position)
+  }
+  return bits
+}
