@@ -29,7 +29,7 @@ import SectionParser from './SectionParser'
 const SUPPORTED_VERSION = new HWPVersion(5, 1, 0, 0)
 const SIGNATURE = 'HWP Document File'
 
-function parseFileHeader(container: CompoundFile): HWPHeader {
+export function parseFileHeader(container: CompoundFile): HWPHeader {
 
   const fileHeader = container.getRootStorage().findChild(
     (entry) => 'FileHeader' === entry.getDirectoryEntryName()
@@ -53,10 +53,12 @@ function parseFileHeader(container: CompoundFile): HWPHeader {
   if (!version.isCompatible(SUPPORTED_VERSION))
     throw new Error(`hwp.js only support '${SUPPORTED_VERSION}' format. Received version: '${version}'`)
 
-  return new HWPHeader(version, signature)
+  const properties = fileHeader.getStreamData().slice(36, 49)
+
+  return new HWPHeader(signature, version, properties)
 }
 
-function parseDocInfo(container: CompoundFile): DocInfo {
+export function parseDocInfo(container: CompoundFile): DocInfo {
   const docInfoEntry = container.getRootStorage().findChild(
     (entry) => 'DocInfo' === entry.getDirectoryEntryName()
   ) as StreamDirectoryEntry
@@ -70,7 +72,7 @@ function parseDocInfo(container: CompoundFile): DocInfo {
   return new DocInfoParser(decodedContent, container).parse()
 }
 
-function parseSection(container: CompoundFile, sectionNumber: number): Section {
+export function parseSection(container: CompoundFile, sectionNumber: number): Section {
   const bodyText = container.getRootStorage().findChild(
     (entry) => 'BodyText' === entry.getDirectoryEntryName()
   ) as StorageDirectoryEntry
@@ -89,7 +91,7 @@ function parseSection(container: CompoundFile, sectionNumber: number): Section {
   return new SectionParser(decodedContent).parse()
 }
 
-function parse(array: Uint8Array): HWPDocument {
+export default function parse(array: Uint8Array): HWPDocument {
   const container = CompoundFile.fromUint8Array(array)
 
   const header = parseFileHeader(container)
@@ -102,5 +104,3 @@ function parse(array: Uint8Array): HWPDocument {
 
   return new HWPDocument(header, docInfo, sections)
 }
-
-export default parse

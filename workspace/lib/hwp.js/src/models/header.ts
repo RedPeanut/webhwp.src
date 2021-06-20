@@ -20,13 +20,15 @@ import HWPVersion from './version'
  * @see https://github.com/hahnlee/hwp.js/blob/master/docs/hwp/5.0/FileHeader.md
  */
 class HWPHeader {
-  version: HWPVersion
 
   signature: string
+  version: HWPVersion
+  properties: number[]
 
-  constructor(version: HWPVersion, signature: string) {
-    this.version = version
+  constructor(signature: string, version: HWPVersion, properties: number[]) {
     this.signature = signature
+    this.version = version
+    this.properties = properties
   }
 }
 
