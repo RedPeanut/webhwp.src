@@ -49,7 +49,10 @@ class HWPWriter {
   docInfo(): void {
     const rootStorage = this.compoundFile.getRootStorage()
     rootStorage.addStorage('DocInfo')
-    new ForDocInfo(this.document.info, this.compoundFile).write()
+    const stream = rootStorage.findChild(
+      (dirEntry) => 'DocInfo' === dirEntry.getDirectoryEntryName()
+    ) as StreamDirectoryEntry
+    new ForDocInfo(this.document.info, stream).write()
   }
 
   bodyText(): void {}
