@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { CompoundFile, StreamDirectoryEntry } from '@webhwp/compound-file-js'
+import { CompoundFile, StorageDirectoryEntry, StreamDirectoryEntry } from '@webhwp/compound-file-js'
 import { parseFileHeader } from '../src/parser/parse'
 import ForFileHeader from '../src/writer/ForFileHeader'
 
@@ -25,16 +25,17 @@ describe('hwp create test', () => {
     //fileHeader()
     const rootStorage = compoundFile.getRootStorage()
     rootStorage.addStorage('FileHeader')
-    const stream = rootStorage.findChild(
+    const storage = rootStorage.findChild(
       (dirEntry) => 'FileHeader' === dirEntry.getDirectoryEntryName()
-    ) as StreamDirectoryEntry
-    new ForFileHeader(header, stream).write()
+    ) as StorageDirectoryEntry
+    new ForFileHeader(header, storage).write()
 
     //writeAndClose()
     const bytes: number[] = compoundFile.asBytes()
     const dstFilePath = path.join(__dirname, 'create', 'blank.hwp')
     fs.writeFile(dstFilePath, new Uint8Array(bytes), 'utf8', function(error) {
       console.log('error() is called...')
+      console.log('error = ' + error)
     })
   })
 });

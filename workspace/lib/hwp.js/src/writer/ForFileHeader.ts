@@ -1,4 +1,4 @@
-import { CompoundFile, StreamDirectoryEntry } from '@webhwp/compound-file-js'
+import { CompoundFile, StorageDirectoryEntry, StreamDirectoryEntry } from '@webhwp/compound-file-js'
 import HWPHeader from '../models/header'
 import HWPVersion from '../models/version'
 
@@ -15,13 +15,13 @@ class ForFileHeader {
   private buffer: number[] = []
   private header: HWPHeader
   //private container: CompoundFile
-  private stream: StreamDirectoryEntry
+  private storage: StorageDirectoryEntry
   //private buffer: []
 
-  constructor(header: HWPHeader, stream: StreamDirectoryEntry) {
+  constructor(header: HWPHeader, storage: StorageDirectoryEntry) {
     this.header = header
     //this.container = container
-    this.stream = stream
+    this.storage = storage
   }
 
   public write(): void {
@@ -29,7 +29,7 @@ class ForFileHeader {
     this.fileVersion()
     this.properties()
     this.zeroFill(207)
-    //this.stream.setStreamData(this.buffer)
+    this.storage.addStream('FileHeader', this.buffer)
   }
 
   private signature(): void {

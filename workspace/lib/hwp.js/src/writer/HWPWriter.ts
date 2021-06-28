@@ -1,4 +1,4 @@
-import { CompoundFile, StreamDirectoryEntry } from '@webhwp/compound-file-js'
+import { CompoundFile, StorageDirectoryEntry, StreamDirectoryEntry } from '@webhwp/compound-file-js'
 
 import HWPDocument from '../models/document'
 import ForFileHeader from './ForFileHeader'
@@ -42,7 +42,7 @@ class HWPWriter {
     rootStorage.addStorage('FileHeader')
     const stream = rootStorage.findChild(
       (dirEntry) => 'FileHeader' === dirEntry.getDirectoryEntryName()
-    ) as StreamDirectoryEntry
+    ) as StorageDirectoryEntry
     new ForFileHeader(this.document.header, stream).write()
   }
 
