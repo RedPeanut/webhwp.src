@@ -60,7 +60,6 @@
   },
   "dependencies": {
     "@webhwp/compound-file-js": "file:../compound-file-js",
-    "cfb": "^1.2.0",
     "pako": "^1.0.11"
   }
 }
