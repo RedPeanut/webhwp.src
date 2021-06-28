@@ -10,7 +10,7 @@
     "test": "mocha -r ts-node/register test/**/*.test.ts",
     "benchmark": "mocha -r ts-node/register benchmark/**/*.spec.ts",
     "build:tsc": "tsc",
-    "build": "npm-run-all clean test lint build:tsc"
+    "build": "npm-run-all clean lint build:tsc"
   },
   "keywords": [
     "Compound File Binary File Format",

@@ -10,7 +10,6 @@ import "../Long";
 
 export class StorageDirectoryEntry extends DirectoryEntry {
 
-
     public static readonly NODE_FACTORY: NodeFactory<DirectoryEntry> = {
         create: (value: DirectoryEntry,  color: Color) => new DirectoryEntryNode(value, color)
     };
